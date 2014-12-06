@@ -5,14 +5,28 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
 	function($scope, $stateParams, $location, Authentication, Accounts) {
 		$scope.authentication = Authentication;
 
+
+
 		// Create new Account
 		$scope.create = function() {
+
 			// Create new Account object
 			var account = new Accounts ({
 				name: this.name,
                 desc: this.desc,
-                interest: this.interest
+                interests: []
 			});
+
+            //Store interest:
+            var interest = {
+              rate: 1,
+              date: Date.now()
+            };
+
+            account.interests.push(interest);
+
+
+
 
 			// Redirect after save
 			account.$save(function(response) {
@@ -45,6 +59,18 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
 		// Update existing Account
 		$scope.update = function() {
 			var account = $scope.account;
+
+            //Store interest should probably be optional:
+            //account.interests.push({rate:$scope.interest.rate,date:$scope.interest.date});
+            if(typeof account.interests === 'undefined'){
+              account.interests = [];
+            }
+
+            account.interests.push({
+              rate: 1,
+              date: Date.now()
+            });
+            //account.interests.push({interest: this.interest, date:this.interestDate});
 
 			account.$update(function() {
 				$location.path('accounts/' + account._id);

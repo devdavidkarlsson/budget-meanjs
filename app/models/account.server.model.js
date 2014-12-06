@@ -12,7 +12,7 @@ var mongoose = require('mongoose'),
  * Interest Rate Schema
  */
 var InterestRate = new Schema({
-  interest:{
+  rate:{
     type: Number,
     default: 0,
     trim: true
@@ -42,7 +42,7 @@ var AccountSchema = new Schema({
       trim: true
     },
     interests:
-        [{ type : Schema.Types.ObjectId, ref: 'InterestRate' }],
+        [{rate: Number, date: Date}],//{ type : Schema.Types.ObjectId, ref: 'InterestRate' }],
     amount:{
       type: Number,
       default:0,
