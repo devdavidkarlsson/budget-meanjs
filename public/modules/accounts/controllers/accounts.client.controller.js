@@ -53,8 +53,8 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
 
             //Store interest:
             var interest = {
-              rate: 1,
-              date: Date.now()
+              rate: this.rate,
+              date: this.date
             };
 
             account.interests.push(interest);
