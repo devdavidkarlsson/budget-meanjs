@@ -5,7 +5,7 @@
     <div class="col-md-4">
         <form class="form-horizontal" data-ng-submit="update()" novalidate>
             <fieldset>
-                <div class="form-group">
+                <div class="form-group well">
                     <label class="control-label" for="name">Name</label>
                     <div class="controls">
                         <input type="text" data-ng-model="account.name" id="name" class="form-control" placeholder="Name" required>
@@ -14,10 +14,11 @@
                     <div class="controls">
                         <input type="text" data-ng-model="account.desc" id="desc" class="form-control" placeholder="Description" required>
                     </div>
-                    Edit interest rates: <input type="checkbox" ng-model="showInterestRates" ><br/>
+                    <label class="control-label" for="showRates">Edit interest rates:</label>
+                    <input id="showRates" type="checkbox" ng-model="showInterestRates" ng-init="showInterestRates=true"><br/>
                     <div ng-if="showInterestRates" >
-                        <div ui-grid="{ data: account.interests, columnDefs: [{field: 'rate', displayName: 'Rate'},{field:'date', displayName:'Date'}] }"></div>
-
+                        <div class="ratesGrid" ui-grid-edit ui-grid="gridOptions" external-scopes="$scope"></div>
+                        <button class="btn-small" type="button" ng-click="addInterestItem()" >Add Rate</button>
 
                         <!--div  data-ng-repeat="interest in account.interests" class="list-group-item">
                             <label class="control-label" for="interest">Interest rate</label>
@@ -43,7 +44,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <input type="submit" value="Update" class="btn btn-default">
+                    <input type="submit" value="Store Updates" class="btn btn-default">
                 </div>
 				<div data-ng-show="error" class="text-danger">
 					<strong data-ng-bind="error"></strong>
