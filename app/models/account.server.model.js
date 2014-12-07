@@ -41,8 +41,10 @@ var AccountSchema = new Schema({
       default: '',
       trim: true
     },
-    interests:
-        [{rate: Number, date: Date}],//{ type : Schema.Types.ObjectId, ref: 'InterestRate' }],
+    interests:[{
+      rate: Number,
+      date: Date
+    }],
     amount:{
       type: Number,
       default:0,

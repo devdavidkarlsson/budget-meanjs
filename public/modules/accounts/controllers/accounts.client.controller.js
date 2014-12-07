@@ -94,18 +94,6 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
 		$scope.update = function() {
 			var account = $scope.account;
 
-            //Store interest should probably be optional:
-            //account.interests.push({rate:$scope.interest.rate,date:$scope.interest.date});
-            /*if(typeof account.interests === 'undefined'){
-              account.interests = [];
-            }
-
-            account.interests.push({
-              rate: 1,
-              date: Date.now()
-            });*/
-            //account.interests.push({interest: this.interest, date:this.interestDate});
-
 			account.$update(function() {
 				$location.path('accounts/' + account._id);
 			}, function(errorResponse) {
@@ -124,5 +112,7 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
 				accountId: $stateParams.accountId
 			});
 		};
+
+
 	}
 ]);

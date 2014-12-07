@@ -1,0 +1,36 @@
+<section data-ng-controller="IncomesController" data-ng-init="findOne()">
+	<div class="page-header">
+		<h1 data-ng-bind="income.name"></h1>
+        <div class="col-md-2" >
+            <b>Amount:</b> <span data-ng-bind="income.amount"></span></br>
+            <b>To Account:</b><span ng-repeat="account in accounts | filter: {_id: income.account}">
+            <span data-ng-bind="account.name"></span>
+            </span>
+            </br>
+        </div>
+            <div class="col-md-2" >
+                <span data-ng-bind="income.date| date:'mediumDate'"></span>
+                <div ng-if="income.monthly">(Monthly)</div>
+                <div ng-if="income.yearly">(Yearly)</div>
+            </div>
+        </br>
+        </br>
+    </div>
+	<div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == income.user._id))">
+		<a class="btn btn-primary" href="/#!/incomes/{{income._id}}/edit">
+			<i class="glyphicon glyphicon-edit"></i>
+		</a>
+		<a class="btn btn-primary" data-ng-click="remove();">
+			<i class="glyphicon glyphicon-trash"></i>
+		</a>
+	</div>
+	<small>
+		<em class="text-muted">
+			Posted on
+			<span data-ng-bind="income.created | date:'mediumDate'"></span>
+			by
+			<span data-ng-bind="income.user.displayName"></span>
+		</em>
+	</small>
+
+</section>
