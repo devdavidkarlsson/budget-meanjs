@@ -22,7 +22,7 @@
                         </div>
 
                         <div class="form-inline">
-                            <div class="controls-row">
+                            <div class="controls-row col-md-2">
                                 <label class="control-label">Recurring transaction</label>
                                 <label class="radio inline">
                                     <input type="radio" data-ng-model="income.recurring" value="monthly"/>
@@ -38,7 +38,7 @@
 
                     <div class="dropdown">
                         <label class="control-label" for="account">Receiving account</label>
-                        <select ng-model="income.account" ng-options="acc._id as acc.name for acc in accounts" ng-selected="income.account"></select>
+                        <select ng-model="income.account" id="account" ng-options="acc._id as acc.name for acc in accounts" ng-selected="income.account"></select>
                     </div>
 
                 </div>

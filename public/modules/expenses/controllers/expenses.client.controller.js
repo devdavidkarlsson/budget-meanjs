@@ -1,15 +1,20 @@
 'use strict';
 
 // Expenses controller
-angular.module('expenses').controller('ExpensesController', ['$scope', '$stateParams', '$location', 'Authentication', 'Expenses',
-	function($scope, $stateParams, $location, Authentication, Expenses) {
+angular.module('expenses').controller('ExpensesController', ['$scope', '$stateParams', '$location', 'Authentication', 'Expenses','Accounts',
+	function($scope, $stateParams, $location, Authentication, Expenses, Accounts) {
 		$scope.authentication = Authentication;
 
 		// Create new Expense
 		$scope.create = function() {
 			// Create new Expense object
 			var expense = new Expenses ({
-				name: this.name
+		      name: this.name,
+              amount: this.amount,
+              date: this.date,
+              monthly: this.recurring==='monthly',
+              yearly: this.recurring==='yearly',
+              account: this.account._id
 			});
 
 			// Redirect after save
@@ -42,10 +47,19 @@ angular.module('expenses').controller('ExpensesController', ['$scope', '$statePa
 
 		// Update existing Expense
 		$scope.update = function() {
-			var expense = $scope.expense;
+          var expense = $scope.expense;
 
-			expense.$update(function() {
-				$location.path('expenses/' + expense._id);
+          var updatedExpense = new Expenses({
+            name: expense.name,
+            amount: expense.amount,
+            date: expense.date,
+            monthly: expense.recurring==='monthly',
+            yearly: expense.recurring==='yearly',
+            account: expense.account,
+            _id: expense._id});
+
+			updatedExpense.$update(function() {
+				$location.path('expenses/' + updatedExpense._id);
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});
@@ -54,13 +68,41 @@ angular.module('expenses').controller('ExpensesController', ['$scope', '$statePa
 		// Find a list of Expenses
 		$scope.find = function() {
 			$scope.expenses = Expenses.query();
-		};
+          console.log($scope.expenses);
+
+        };
 
 		// Find existing Expense
 		$scope.findOne = function() {
 			$scope.expense = Expenses.get({ 
 				expenseId: $stateParams.expenseId
-			});
-		};
+			}).$promise.then(function(expense){
+
+                  var recurringVar;
+                  if(expense.monthly===true){
+                    recurringVar = 'monthly';
+                  } else if( expense.yearly===true){
+                    recurringVar = 'yearly';
+                  }
+                  $scope.expense = {
+                    name: expense.name,
+                    amount:expense.amount,
+                    date: new Date(expense.date),
+                    recurring: recurringVar,
+                    account:expense.account,
+                    created:expense.created,
+                    user: expense.user,
+                    _id:expense._id
+                  };
+                });
+
+
+          $scope.findAccounts();
+        };
+
+      // Find a list of Accounts
+      $scope.findAccounts = function() {
+        $scope.accounts = Accounts.query();
+      };
 	}
 ]);
