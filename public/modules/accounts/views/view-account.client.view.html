@@ -1,13 +1,28 @@
-<section data-ng-controller="AccountsController" data-ng-init="findOne()">
+<section data-ng-controller="AccountsController" data-ng-init="calculateOne()">
 	<div class="page-header">
 		<h1 data-ng-bind="account.name"></h1>
+        <a data-ng-repeat="cashflow in cashflows" data-ng-href="" class="list-group-item">
+            <span class="label label-warning label-as-badge pull-right" data-ng-bind="cashflow.amount"></span>
+            <h4 class="list-group-item-heading" data-ng-bind="cashflow.name"></h4>
+            </br>
+            <div class="pull-right date-badge">
+                <b>Date:</b> <span data-ng-bind="cashflow.date| date:'mediumDate'"></span>
+                <span ng-if="cashflow.yearly">(Yearly)</span>
+                <span ng-if="cashflow.monthly">(Monthly)</span>
+            </div>
+        </a>
+        <a class="list-group-item" ng-class="">
+            <span class="label label-info label-as-badge pull-right" data-ng-bind="sumCashflows"></span>
+            <h4>Summa</h4>
+
+        </a>
 	</div>
 	<div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == account.user._id))">
 		<a class="btn btn-primary" href="/#!/accounts/{{account._id}}/edit">
-			<i class="glyphicon glyphicon-edit"></i>
+			<i class="glyphicon glyphicon-edit"></i> Edit Account
 		</a>
 		<a class="btn btn-primary" data-ng-click="remove();">
-			<i class="glyphicon glyphicon-trash"></i>
+			<i class="glyphicon glyphicon-trash"></i> Remove Account
 		</a>
 	</div>
 	<small>

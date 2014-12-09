@@ -72,8 +72,6 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$statePara
     // Find a list of Incomes
     $scope.find = function() {
       $scope.incomes = Incomes.query();
-      console.log($scope.incomes);
-
     };
 
     // Find existing Income
