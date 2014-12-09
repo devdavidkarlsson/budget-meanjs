@@ -49,10 +49,21 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$statePara
 
 		// Update existing Income
 		$scope.update = function() {
-			var income = $scope.income;
 
-			income.$update(function() {
-				$location.path('incomes/' + income._id);
+		  var income = $scope.income;
+
+          var updatedIncome = new Incomes ({
+            name: income.name,
+            amount: income.amount,
+            date: income.date,
+            monthly: income.recurring==='monthly',
+            yearly: income.recurring==='yearly',
+            account: income.account,
+            _id: income._id
+          });
+
+			updatedIncome.$update(function() {
+				$location.path('incomes/' + updatedIncome._id);
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});
@@ -61,13 +72,29 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$statePara
 		// Find a list of Incomes
 		$scope.find = function() {
 			$scope.incomes = Incomes.query();
+
 		};
 
 		// Find existing Income
 		$scope.findOne = function() {
-			$scope.income = Incomes.get({
+			Incomes.get({
 				incomeId: $stateParams.incomeId
-        });
+        }).$promise.then(function(income){
+
+                  var recurringVar;
+                  if(income.monthly===true){
+                    recurringVar = 'monthly';
+                  } else if( income.yearly===true){
+                    recurringVar = 'yearly';
+
+                  }
+
+                  console.log(income);
+
+                  $scope.income = {name: income.name, amount:income.amount, date: new Date(income.date), recurring: recurringVar, account:income.account, created:income.created, user: income.user, _id:income._id};
+
+                  console.log($scope.income.recurring);
+                });
 
 
          $scope.findAccounts();

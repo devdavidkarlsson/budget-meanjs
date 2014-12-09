@@ -1,17 +1,17 @@
 <section data-ng-controller="IncomesController" data-ng-init="findOne()">
 	<div class="page-header">
-		<h1 data-ng-bind="income.name"></h1>
-        <div class="col-md-2" >
-            <b>Amount:</b> <span data-ng-bind="income.amount"></span></br>
+        <span class="label label-info label-as-badge pull-right" data-ng-bind="income.amount"></span>
+
+        <div class="col-md-3 pull-left" >
+            <b>Name:</b> <span data-ng-bind="income.name"></span></br>
             <b>To Account:</b><span ng-repeat="account in accounts | filter: {_id: income.account}">
             <span data-ng-bind="account.name"></span>
             </span>
             </br>
         </div>
-            <div class="col-md-2" >
-                <span data-ng-bind="income.date| date:'mediumDate'"></span>
-                <div ng-if="income.monthly">(Monthly)</div>
-                <div ng-if="income.yearly">(Yearly)</div>
+            <div class="col-md-2 pull-left" >
+                <b>Date:</b> <span data-ng-bind="income.date| date:'mediumDate'"></span>
+                <div ng-if="income.recurring">({{income.recurring}})</div>
             </div>
         </br>
         </br>

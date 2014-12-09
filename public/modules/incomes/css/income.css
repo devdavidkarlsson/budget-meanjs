@@ -9,3 +9,16 @@
 #syearly{
     width: 130px;
 }
+
+.label-as-badge {
+    border-radius: 1em;
+    font-size: 24px;
+}
+
+.date-badge {
+    font-size: 10px;
+}
+
+.list-group-item{
+    padding: 15px;
+}

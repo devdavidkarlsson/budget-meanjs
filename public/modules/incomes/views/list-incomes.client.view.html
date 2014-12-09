@@ -4,16 +4,24 @@
     </div>
     <div class="list-group">
         <a data-ng-repeat="income in incomes" data-ng-href="#!/incomes/{{income._id}}" class="list-group-item">
-			<small class="list-group-item-text">
-				Posted on
-				<span data-ng-bind="income.created | date:'medium'"></span>
-				by
-				<span data-ng-bind="income.user.displayName"></span>
-			</small>
-			<h4 class="list-group-item-heading" data-ng-bind="income.name"></h4>
+            <!--span class="badge badge-success" data-ng-bind="income.amount"></span-->
+            <span class="label label-info label-as-badge pull-right" data-ng-bind="income.amount"></span>
+            <!--small class="list-group-item-text">
+                Posted on
+                <span data-ng-bind="income.created | date:'medium'"></span>
+                by
+                <span data-ng-bind="income.user.displayName"></span>
+            </small-->
+            <h4 class="list-group-item-heading" data-ng-bind="income.name"></h4>
+            </br>
+            <div class="pull-right date-badge">
+                <b>Date:</b> <span data-ng-bind="income.date| date:'mediumDate'"></span>
+                <span ng-if="income.yearly">(Yearly)</span>
+                <span ng-if="income.monthly">(Monthly)</span>
+            </div>
         </a>
     </div>
     <div class="alert alert-warning text-center" data-ng-hide="!incomes.$resolved || incomes.length">
-    	No Incomes yet, why don't you <a href="/#!/incomes/create">create one</a>?
+        No Incomes yet, why don't you <a href="/#!/incomes/create">create one</a>?
     </div>
 </section>
