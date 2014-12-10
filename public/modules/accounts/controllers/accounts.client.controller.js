@@ -104,12 +104,12 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
 
     // Find a list of Accounts
     $scope.find = function() {
-      $scope.accounts = Accounts.query();
+      this.accounts = Accounts.query();
     };
 
     // Find existing Account
     $scope.findOne = function() {
-      $scope.account = Accounts.get({
+      this.account = Accounts.get({
         accountId: $stateParams.accountId
       });
     };
@@ -125,7 +125,9 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
         allIncomes.forEach(
             function(income){
               if(income.account===accountId){
-                $scope.cashflows.push(income);
+                getAllCashflowInstances(income).forEach(function(incomeInstance){
+                  $scope.cashflows.push(incomeInstance);
+                });
               }
 
             });
@@ -136,18 +138,47 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
             function(expense){
               if(expense.account===accountId){
                 expense.amount=-expense.amount;
-                $scope.cashflows.push(expense);
+                getAllCashflowInstances(expense).forEach(function(expenceInstance){
+                  $scope.cashflows.push(expenceInstance);
+                });
+
               }
 
             });
 
         $scope.sumCashflows = 0;
+
+        //should be sorted on date
+        $scope.cashflows.sort(function(a, b) {
+          return new Date(a.date) - new Date(b.date);
+        });
+
         $scope.cashflows.forEach(function(flow) {
           $scope.sumCashflows += Number(flow.amount);
         });
 
 
       });
+
+
+      function getAllCashflowInstances(cashflow) {
+        var startDate=new Date(cashflow.date),
+            currentDate= new Date(),
+            cashflows = [];
+
+
+
+        if(cashflow.monthly===true){
+          while (startDate <= currentDate) {
+            var newCashflow = JSON.parse(JSON.stringify(cashflow));
+            newCashflow.date=startDate;
+            cashflows.push(newCashflow);
+            var newDate = new Date(startDate).setMonth(startDate.getMonth() + 1);
+            startDate = new Date(newDate);
+          }
+        }
+          return cashflows;
+      }
 
 
     };

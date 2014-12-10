@@ -2,7 +2,7 @@
 	<div class="page-header">
 		<h1 data-ng-bind="account.name"></h1>
         <a data-ng-repeat="cashflow in cashflows" data-ng-href="" class="list-group-item">
-            <span class="label label-warning label-as-badge pull-right" data-ng-bind="cashflow.amount"></span>
+            <span class="label label-as-badge pull-right" ng-class="cashflow.amount > 0 ? 'label-info': 'label-danger'" data-ng-bind="cashflow.amount"></span>
             <h4 class="list-group-item-heading" data-ng-bind="cashflow.name"></h4>
             </br>
             <div class="pull-right date-badge">
@@ -12,8 +12,8 @@
             </div>
         </a>
         <a class="list-group-item" ng-class="">
-            <span class="label label-info label-as-badge pull-right" data-ng-bind="sumCashflows"></span>
-            <h4>Summa</h4>
+            <span class="label label-as-badge pull-right" ng-class="sumCashflows > 0 ? 'label-info': 'label-danger'" data-ng-bind="sumCashflows"></span>
+            <h4>Sum:</h4>
 
         </a>
 	</div>
@@ -27,7 +27,7 @@
 	</div>
 	<small>
 		<em class="text-muted">
-			Posted on
+			Created on
 			<span data-ng-bind="account.created | date:'mediumDate'"></span>
 			by
 			<span data-ng-bind="account.user.displayName"></span>

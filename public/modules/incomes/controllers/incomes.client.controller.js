@@ -50,7 +50,7 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$statePara
     // Update existing Income
     $scope.update = function() {
 
-      var income = $scope.income;
+      var income = this.income;
 
       var updatedIncome = new Incomes ({
         name: income.name,
