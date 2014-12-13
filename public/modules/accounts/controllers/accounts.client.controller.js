@@ -8,6 +8,8 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
 
     $scope.show='home';
 
+
+
     //Grid setup
     $scope.$scope = $scope;
 
@@ -154,9 +156,47 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
           return new Date(a.date) - new Date(b.date);
         });
 
+        var graphValues = [];
         $scope.cashflows.forEach(function(flow) {
+          graphValues.push([new Date(flow.date),flow.amount]);
           $scope.sumCashflows += Number(flow.amount);
         });
+
+
+        var sum = {};
+        var i;
+        for (i = 0; i < graphValues.length; i++) {
+          var key = graphValues[i][0];
+          //console.log('key:'+key);
+
+          var oldSum = sum[key];
+          if (typeof oldSum === 'undefined') {
+            oldSum = 0;
+          }
+          sum[key] = oldSum + Number(graphValues[i][1]);
+        }
+        console.log(sum);
+
+        var graphSum=[];
+
+        for(key in sum){
+          console.log([(key), sum[key]]);
+          graphSum.push([(key), sum[key]]);
+        };
+
+        console.log(graphSum);
+        /*graphValues.forEach(function(obj){
+          if(graphValues.indexOf(obj)>0) console.log('');
+
+
+        });*/
+
+        $scope.graphData=[{"key": "Series 1",
+            "values":graphSum}];
+
+
+
+        console.log(JSON.stringify($scope.graphData));
 
 
       });
@@ -183,6 +223,12 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
 
 
     };
+
+    $scope.xAxisTickFormatFunction = function(){
+      return function(d){
+        return d3.time.format('%b')(new Date(d));
+      }
+    }
 
   }
 ]);

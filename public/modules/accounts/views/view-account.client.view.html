@@ -33,7 +33,9 @@
 
             </a>
         </div>
+
         <div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == account.user._id))">
+            </br>
             <a class="btn btn-primary" href="/#!/accounts/{{account._id}}/edit">
                 <i class="glyphicon glyphicon-edit"></i> Edit Account
             </a>
@@ -41,8 +43,26 @@
                 <i class="glyphicon glyphicon-trash"></i> Remove Account
             </a>
         </div>
+
+        <div ng-show="show=='graph'">
+            <nvd3-discrete-bar-chart
+                    class="graph"
+                    data="graphData"
+                    width="768"
+                    height="350"
+                    showXAxis="true"
+                    showYAxis="true"
+                    xAxisTickFormat="xAxisTickFormatFunction()"
+                    >
+            </nvd3-discrete-bar-chart>
     </div>
-    <div ng-show="show=='graph'"></div>
+
+
+
+
+
+
+    </div>
 	<small>
 		<em class="text-muted">
 			Created on
@@ -51,4 +71,5 @@
 			<span data-ng-bind="account.user.displayName"></span>
 		</em>
 	</small>
+
 </section>

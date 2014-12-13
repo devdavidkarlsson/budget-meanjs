@@ -13,3 +13,7 @@ input[type=checkbox]:after {
 input.open[type=checkbox]:after {
     content: '▿';
 }
+
+.graph{
+    font-size: 10px
+}
