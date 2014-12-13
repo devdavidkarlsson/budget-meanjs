@@ -6,6 +6,7 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
     $scope.authentication = Authentication;
     var removeTemplate ='<button id="deleteBtn" type="button" class="btn-small" ng-click="getExternalScopes().removeRow(row)">Delete</button> ';
 
+    $scope.show='home';
 
     //Grid setup
     $scope.$scope = $scope;

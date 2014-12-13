@@ -1,30 +1,48 @@
 <section data-ng-controller="AccountsController" data-ng-init="calculateOne()">
 	<div class="page-header">
 		<h1 data-ng-bind="account.name"></h1>
-        <a data-ng-repeat="cashflow in cashflows" data-ng-href="" class="list-group-item">
-            <span class="label label-as-badge pull-right" ng-class="cashflow.amount > 0 ? 'label-info': 'label-danger'" data-ng-bind="cashflow.amount"></span>
-            <h4 class="list-group-item-heading" data-ng-bind="cashflow.name"></h4>
-            </br>
-            <div class="pull-right date-badge">
-                <b>Date:</b> <span data-ng-bind="cashflow.date| date:'mediumDate'"></span>
-                <span ng-if="cashflow.yearly">(Yearly)</span>
-                <span ng-if="cashflow.monthly">(Monthly)</span>
-            </div>
-        </a>
-        <a class="list-group-item" ng-class="">
-            <span class="label label-as-badge pull-right" ng-class="sumCashflows > 0 ? 'label-info': 'label-danger'" data-ng-bind="sumCashflows"></span>
-            <h4>Sum:</h4>
+        <ul class="nav nav-tabs">
+            <li role="presentation" ng-class="{true:'active'}[show === 'home']"><a ng-click="show='home'">Home</a></li>
+            <li role="presentation" ng-class="{true:'active'}[show === 'list']"><a ng-click="show='list'">Transactions List</a></li>
+            <li role="presentation" ng-class="{true:'active'}[show === 'graph']"><a ng-click="show='graph'">Graphs</a></li>
+        </ul>
+        <div ng-show="show=='home'">
+            <a class="list-group-item" ng-class="">
+                <span class="label label-as-badge pull-right" ng-class="sumCashflows > 0 ? 'label-info': 'label-danger'" data-ng-bind="sumCashflows"></span>
+                <h4>Accumulated until today:</h4>
 
-        </a>
-	</div>
-	<div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == account.user._id))">
-		<a class="btn btn-primary" href="/#!/accounts/{{account._id}}/edit">
-			<i class="glyphicon glyphicon-edit"></i> Edit Account
-		</a>
-		<a class="btn btn-primary" data-ng-click="remove();">
-			<i class="glyphicon glyphicon-trash"></i> Remove Account
-		</a>
-	</div>
+            </a>
+
+        </div>
+
+
+        <div ng-show="show=='list'">
+            <a data-ng-repeat="cashflow in cashflows" data-ng-href="" class="list-group-item">
+                <span class="label label-as-badge pull-right" ng-class="cashflow.amount > 0 ? 'label-info': 'label-danger'" data-ng-bind="cashflow.amount"></span>
+                <h5 class="list-group-item-heading" data-ng-bind="cashflow.name"></h5>
+                </br>
+                <div class="pull-right date-badge">
+                    <b>Date:</b> <span data-ng-bind="cashflow.date| date:'mediumDate'"></span>
+                    <span ng-if="cashflow.yearly">(Yearly)</span>
+                    <span ng-if="cashflow.monthly">(Monthly)</span>
+                </div>
+            </a>
+            <a class="list-group-item" ng-class="">
+                <span class="label label-as-badge pull-right" ng-class="sumCashflows > 0 ? 'label-info': 'label-danger'" data-ng-bind="sumCashflows"></span>
+                <h4>Sum:</h4>
+
+            </a>
+        </div>
+        <div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == account.user._id))">
+            <a class="btn btn-primary" href="/#!/accounts/{{account._id}}/edit">
+                <i class="glyphicon glyphicon-edit"></i> Edit Account
+            </a>
+            <a class="btn btn-primary" data-ng-click="remove();">
+                <i class="glyphicon glyphicon-trash"></i> Remove Account
+            </a>
+        </div>
+    </div>
+    <div ng-show="show=='graph'"></div>
 	<small>
 		<em class="text-muted">
 			Created on

@@ -1,6 +1,6 @@
 .label-as-badge {
     border-radius: 1em;
-    font-size: 24px;
+    font-size: 14px;
 }
 
 .date-badge {
@@ -9,4 +9,5 @@
 
 .list-group-item{
     padding: 15px;
+    line-height: 0.5;
 }
