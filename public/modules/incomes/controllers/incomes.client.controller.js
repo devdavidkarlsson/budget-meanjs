@@ -76,9 +76,12 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$statePara
 
     // Find existing Income
     $scope.findOne = function() {
+      var that=this;
       Incomes.get({
         incomeId: $stateParams.incomeId
       }).$promise.then(function(income){
+
+
 
             var recurringVar;
             if(income.monthly===true){
@@ -86,16 +89,9 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$statePara
             } else if( income.yearly===true){
               recurringVar = 'yearly';
             }
-            $scope.income = {
-              name: income.name,
-              amount:income.amount,
-              date: new Date(income.date),
-              recurring: recurringVar,
-              account:income.account,
-              created:income.created,
-              user: income.user,
-              _id:income._id
-            };
+            income.date= new Date(income.date);
+            income.recurring=recurringVar;
+            that.income=income;
           });
 
 

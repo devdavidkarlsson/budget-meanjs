@@ -10,10 +10,13 @@
 				by
 				<span data-ng-bind="account.user.displayName"></span>
 			</small>
-			<h4 class="list-group-item-heading" data-ng-bind="account.name"></h4>
-            <h5 class="list-group-item-heading" data-ng-bind="account.name"></h5>
+            <span class="label label-as-badge pull-right" ng-class="account.sum > 0 ? 'label-info': 'label-danger'" data-ng-bind="account.sum"></span>
+            <h4 class="list-group-item-heading" data-ng-bind="account.name"></h4>
 
+            <!--h5 class="list-group-item-heading" data-ng-bind="account.name"></h5-->
         </a>
+
+
     </div>
     <div class="alert alert-warning text-center" data-ng-hide="!accounts.$resolved || accounts.length">
     	No Accounts yet, why don't you <a href="/#!/accounts/create">create one</a>?

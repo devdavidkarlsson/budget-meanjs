@@ -1,0 +1,30 @@
+Create option for managing transfer between own accounts.
+
+Show saldo on account list page.
+
+
+
+
+
+
+
+
+
+
+
+
+Done:
+
+Income/Expense remove not working, should rewrite getOne to similar to this:
+
+    // Find existing Account
+    $scope.findOne = function() {
+      this.account = Accounts.get({
+        accountId: $stateParams.accountId
+      });
+    };
+
+    The $promise.then part breaks the resource, so that the remove function does not work anymore.
+    Problem is, with the short getter above i do not get a date object and a boolean for date to the frontend.
+
+    Solved by attaching account to this by passing that=this to the promise

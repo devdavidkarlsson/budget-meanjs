@@ -8,11 +8,11 @@
         </ul>
         <div ng-show="show=='home'">
             <a class="list-group-item" ng-class="">
+                <h4>Description<h4/>
+                <h5>{{account.desc}}</h5>
                 <span class="label label-as-badge pull-right" ng-class="sumCashflows > 0 ? 'label-info': 'label-danger'" data-ng-bind="sumCashflows"></span>
                 <h4>Accumulated until today:</h4>
-
             </a>
-
         </div>
 
 
@@ -43,18 +43,30 @@
                 <i class="glyphicon glyphicon-trash"></i> Remove Account
             </a>
         </div>
-
+        <h3>Transactions</h3>
         <div ng-show="show=='graph'">
             <nvd3-discrete-bar-chart
                     class="graph"
                     data="graphData"
                     width="768"
-                    height="350"
+                    height="400"
                     showXAxis="true"
                     showYAxis="true"
                     xAxisTickFormat="xAxisTickFormatFunction()"
                     >
             </nvd3-discrete-bar-chart>
+            <h3>Cumulative</h3>
+
+            <nvd3-cumulative-line-chart
+                    class="graph"
+                    data=""
+                    width="768"
+                    height="400"
+                    showXAxis="true"
+                    showYAxis="true"
+                    >
+            </nvd3-cumulative-line-chart>
+
     </div>
 
 

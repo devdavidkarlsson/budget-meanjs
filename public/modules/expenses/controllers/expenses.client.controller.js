@@ -2,107 +2,103 @@
 
 // Expenses controller
 angular.module('expenses').controller('ExpensesController', ['$scope', '$stateParams', '$location', 'Authentication', 'Expenses','Accounts',
-	function($scope, $stateParams, $location, Authentication, Expenses, Accounts) {
-		$scope.authentication = Authentication;
+  function($scope, $stateParams, $location, Authentication, Expenses, Accounts) {
+    $scope.authentication = Authentication;
 
-		// Create new Expense
-		$scope.create = function() {
-			// Create new Expense object
-			var expense = new Expenses ({
-		      name: this.name,
-              amount: this.amount,
-              date: this.date,
-              monthly: this.recurring==='monthly',
-              yearly: this.recurring==='yearly',
-              account: this.account._id
-			});
+    // Create new Expense
+    $scope.create = function() {
+      // Create new Expense object
+      var expense = new Expenses ({
+        name: this.name,
+        amount: this.amount,
+        date: this.date,
+        monthly: this.recurring==='monthly',
+        yearly: this.recurring==='yearly',
+        account: this.account._id
+      });
 
-			// Redirect after save
-			expense.$save(function(response) {
-				$location.path('expenses/' + response._id);
+      // Redirect after save
+      expense.$save(function(response) {
+        $location.path('expenses/' + response._id);
 
-				// Clear form fields
-				$scope.name = '';
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
+        // Clear form fields
+        $scope.name = '';
+      }, function(errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
 
-		// Remove existing Expense
-		$scope.remove = function(expense) {
-			if ( expense ) { 
-				expense.$remove();
+    // Remove existing Expense
+    $scope.remove = function(expense) {
+      if ( expense ) {
+        expense.$remove();
 
-				for (var i in $scope.expenses) {
-					if ($scope.expenses [i] === expense) {
-						$scope.expenses.splice(i, 1);
-					}
-				}
-			} else {
-				$scope.expense.$remove(function() {
-					$location.path('expenses');
-				});
-			}
-		};
+        for (var i in $scope.expenses) {
+          if ($scope.expenses [i] === expense) {
+            $scope.expenses.splice(i, 1);
+          }
+        }
+      } else {
+        $scope.expense.$remove(function() {
+          $location.path('expenses');
+        });
+      }
+    };
 
-		// Update existing Expense
-		$scope.update = function() {
-          var expense = $scope.expense;
+    // Update existing Expense
+    $scope.update = function() {
+      var expense = $scope.expense;
 
-          var updatedExpense = new Expenses({
-            name: expense.name,
-            amount: expense.amount,
-            date: expense.date,
-            monthly: expense.recurring==='monthly',
-            yearly: expense.recurring==='yearly',
-            account: expense.account,
-            _id: expense._id});
+      var updatedExpense = new Expenses({
+        name: expense.name,
+        amount: expense.amount,
+        date: expense.date,
+        monthly: expense.recurring==='monthly',
+        yearly: expense.recurring==='yearly',
+        account: expense.account,
+        _id: expense._id});
 
-			updatedExpense.$update(function() {
-				$location.path('expenses/' + updatedExpense._id);
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
+      updatedExpense.$update(function() {
+        $location.path('expenses/' + updatedExpense._id);
+      }, function(errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
 
-		// Find a list of Expenses
-		$scope.find = function() {
-			$scope.expenses = Expenses.query();
-          console.log($scope.expenses);
+    // Find a list of Expenses
+    $scope.find = function() {
+      $scope.expenses = Expenses.query();
+      console.log($scope.expenses);
 
-        };
+    };
 
-		// Find existing Expense
-		$scope.findOne = function() {
-			$scope.expense = Expenses.get({ 
-				expenseId: $stateParams.expenseId
-			}).$promise.then(function(expense){
+    // Find existing Expense
+    $scope.findOne = function() {
+      var that = this;
+      Expenses.get({
+        expenseId: $stateParams.expenseId
+      }).$promise.then(function(expense){
 
-                  var recurringVar;
-                  if(expense.monthly===true){
-                    recurringVar = 'monthly';
-                  } else if( expense.yearly===true){
-                    recurringVar = 'yearly';
-                  }
-                  $scope.expense = {
-                    name: expense.name,
-                    amount:expense.amount,
-                    date: new Date(expense.date),
-                    recurring: recurringVar,
-                    account:expense.account,
-                    created:expense.created,
-                    user: expense.user,
-                    _id:expense._id
-                  };
-                });
+            var recurringVar;
+            if(expense.monthly===true){
+              recurringVar = 'monthly';
+            } else if( expense.yearly===true){
+              recurringVar = 'yearly';
+            }
+
+            expense.date = new Date(expense.date);
+            expense.recurring = recurringVar;
+            that.expense=expense;
+
+          });
 
 
-          $scope.findAccounts();
-        };
+      $scope.findAccounts();
+    };
 
-      // Find a list of Accounts
-      $scope.findAccounts = function() {
-        $scope.accounts = Accounts.query();
-      };
-	}
+    // Find a list of Accounts
+    $scope.findAccounts = function() {
+      $scope.accounts = Accounts.query();
+    };
+  }
 ]);
