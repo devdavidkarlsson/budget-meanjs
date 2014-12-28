@@ -241,11 +241,9 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
       var startDate=new Date(cashflow.date),
           currentDate= new Date(),
           cashflows = [],
-          newDate,newMonth;
+          newDate,newMonth, newYear;
 
-
-
-      if(cashflow.monthly===true){
+      if(cashflow.monthly === true){
         //If it is the last day of month, make sure all the created instances get last day of month:
         var addToLastDayOfMonth=isLastDayOfMonth(startDate);
 
@@ -271,6 +269,35 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
           startDate = new Date(newDate);
         }
       }
+      else if(cashflow.yearly === true){
+        var addToLastDayOfMonth=isLastDayOfMonth(startDate);
+
+
+        while (startDate <= currentDate) {
+          cashflow.date=startDate;
+          var newCashflow = JSON.parse(JSON.stringify(cashflow));
+          cashflows.push(newCashflow);
+          console.log('new year:' + startDate.getFullYear());
+
+
+
+          newYear = startDate.getFullYear()+1;
+          newDate = new Date(new Date(startDate).setFullYear(newYear));
+
+
+          if(addToLastDayOfMonth){
+            //Do corrections for last day of month
+            newMonth=startDate.getMonth;
+            //make sure the day exists in all months before procceding:
+            startDate.setDate(1);
+            //Create an instance at the last day of the month
+            newDate = getLastDateOfMonth(new Date(new Date(newDate).setMonth(newMonth)));
+          }
+          startDate = new Date(newDate);
+        }
+      }
+
+
       return cashflows;
     }
 

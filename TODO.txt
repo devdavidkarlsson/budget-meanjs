@@ -1,8 +1,9 @@
 Create option for managing transfer between own accounts.
 
-Show saldo on account list page.
 
+Add radiobutton/option for not recurring transfers.
 
+Is summing for yearly and non-recurring working?
 
 
 
@@ -14,6 +15,8 @@ Show saldo on account list page.
 
 
 Done:
+
+Show saldo on account list page.
 
 Income/Expense remove not working, should rewrite getOne to similar to this:
 
