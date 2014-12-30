@@ -6,11 +6,11 @@ module.exports = function(app) {
 
 	// Accounts Routes
 	app.route('/accounts')
-		.get(accounts.list)
+		.get(users.requiresLogin,accounts.list)
 		.post(users.requiresLogin, accounts.create);
 
 	app.route('/accounts/:accountId')
-		.get(accounts.read)
+		.get(users.requiresLogin, accounts.hasAuthorization,accounts.read)
 		.put(users.requiresLogin, accounts.hasAuthorization, accounts.update)
 		.delete(users.requiresLogin, accounts.hasAuthorization, accounts.delete);
 

@@ -6,7 +6,7 @@ module.exports = function(app) {
 
 	// Expenses Routes
 	app.route('/expenses')
-		.get(expenses.list)
+		.get(users.requiresLogin, expenses.list)
 		.post(users.requiresLogin, expenses.create);
 
 	app.route('/expenses/:expenseId')

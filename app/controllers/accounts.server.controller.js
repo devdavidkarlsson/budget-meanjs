@@ -72,8 +72,9 @@ exports.delete = function(req, res) {
 /**
  * List of Accounts
  */
-exports.list = function(req, res) { 
-	Account.find().sort('-created').populate('user', 'displayName').exec(function(err, accounts) {
+exports.list = function(req, res) {
+  console.log('REQ DATA:'+JSON.stringify(req.user));
+	Account.find({ user: req.user}).sort('-created').populate('user', 'displayName').exec(function(err, accounts) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)

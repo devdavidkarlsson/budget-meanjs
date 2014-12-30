@@ -1,20 +1,22 @@
 Create option for managing transfer between own accounts.
 
 
-Add radiobutton/option for not recurring transfers.
-
-Is summing for yearly and non-recurring working?
 
 
+Add stock to any account (number of, purchase price, dividends)? fetch value-> profit/loss?
 
 
-
+Tie resources to user
 
 
 
 
 
 Done:
+
+Add radiobutton/option for not recurring transfers.
+
+Is summing for yearly and non-recurring working?
 
 Show saldo on account list page.
 

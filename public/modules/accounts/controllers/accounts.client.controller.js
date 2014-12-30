@@ -241,16 +241,16 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
       var startDate=new Date(cashflow.date),
           currentDate= new Date(),
           cashflows = [],
-          newDate,newMonth, newYear;
+          newDate,newMonth, newYear, newCashflow, addToLastDayOfMonth;
 
       if(cashflow.monthly === true){
         //If it is the last day of month, make sure all the created instances get last day of month:
-        var addToLastDayOfMonth=isLastDayOfMonth(startDate);
+        addToLastDayOfMonth=isLastDayOfMonth(startDate);
 
 
         while (startDate <= currentDate) {
           cashflow.date=startDate;
-          var newCashflow = JSON.parse(JSON.stringify(cashflow));
+          newCashflow = JSON.parse(JSON.stringify(cashflow));
           cashflows.push(newCashflow);
 
           //Go to next month's instance
@@ -270,12 +270,12 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
         }
       }
       else if(cashflow.yearly === true){
-        var addToLastDayOfMonth=isLastDayOfMonth(startDate);
+        addToLastDayOfMonth=isLastDayOfMonth(startDate);
 
 
         while (startDate <= currentDate) {
           cashflow.date=startDate;
-          var newCashflow = JSON.parse(JSON.stringify(cashflow));
+          newCashflow = JSON.parse(JSON.stringify(cashflow));
           cashflows.push(newCashflow);
           console.log('new year:' + startDate.getFullYear());
 
@@ -295,9 +295,10 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
           }
           startDate = new Date(newDate);
         }
+      }else{
+        //Not reccuring
+        cashflows.push(cashflow);
       }
-
-
       return cashflows;
     }
 
