@@ -6,6 +6,8 @@
         <a data-ng-repeat="expense in expenses" data-ng-href="#!/expenses/{{expense._id}}" class="list-group-item">
             <span class="label label-warning label-as-badge pull-right" data-ng-bind="expense.amount"></span>
             <h4 class="list-group-item-heading" data-ng-bind="expense.name"></h4>
+            <span ng-if="expense.isTransfer && expense.transferToAccount" >(Transfer to: {{findAccountById(expense.transferToAccount).name}})</span>
+
             </br>
             <div class="pull-right date-badge">
                 <b>Date:</b> <span data-ng-bind="expense.date| date:'mediumDate'"></span>

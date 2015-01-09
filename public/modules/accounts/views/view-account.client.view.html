@@ -21,6 +21,9 @@
                 <span class="label label-as-badge pull-right" ng-class="cashflow.amount > 0 ? 'label-info': 'label-danger'" data-ng-bind="cashflow.amount"></span>
                 <h5 class="list-group-item-heading" data-ng-bind="cashflow.name"></h5>
                 </br>
+                <span ng-if="cashflow.isTransfer && cashflow.transferFromAccount" >(Transfer from: {{findAccountById(cashflow.transferFromAccount).name}})</span>
+                <span ng-if="cashflow.isTransfer && cashflow.transferToAccount" >(Transfer to: {{findAccountById(cashflow.transferToAccount).name}})</span>
+
                 <div class="pull-right date-badge">
                     <b>Date:</b> <span data-ng-bind="cashflow.date| date:'mediumDate'"></span>
                     <span ng-if="cashflow.yearly">(Yearly)</span>
@@ -43,8 +46,8 @@
                 <i class="glyphicon glyphicon-trash"></i> Remove Account
             </a>
         </div>
-        <h3>Transactions</h3>
         <div ng-show="show=='graph'">
+            <h3>Transactions</h3>
             <nvd3-discrete-bar-chart
                     class="graph"
                     data="graphData"

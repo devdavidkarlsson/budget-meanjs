@@ -1,8 +1,8 @@
 'use strict';
 
 // Expenses controller
-angular.module('expenses').controller('ExpensesController', ['$scope', '$stateParams', '$location', 'Authentication', 'Expenses','Accounts',
-  function($scope, $stateParams, $location, Authentication, Expenses, Accounts) {
+angular.module('expenses').controller('ExpensesController', ['$scope','$filter', '$stateParams', '$location', 'Authentication', 'Expenses','Accounts',
+  function($scope,$filter, $stateParams, $location, Authentication, Expenses, Accounts) {
     $scope.authentication = Authentication;
 
     // Create new Expense
@@ -14,7 +14,7 @@ angular.module('expenses').controller('ExpensesController', ['$scope', '$statePa
         date: this.date,
         monthly: this.recurring==='monthly',
         yearly: this.recurring==='yearly',
-        account: this.account._id
+        fromAccount: this.account._id
       });
 
       // Redirect after save
@@ -55,7 +55,7 @@ angular.module('expenses').controller('ExpensesController', ['$scope', '$statePa
         date: expense.date,
         monthly: expense.recurring==='monthly',
         yearly: expense.recurring==='yearly',
-        account: expense.account,
+        fromAccount: expense.account,
         _id: expense._id});
 
       updatedExpense.$update(function() {
@@ -69,6 +69,7 @@ angular.module('expenses').controller('ExpensesController', ['$scope', '$statePa
     $scope.find = function() {
       $scope.expenses = Expenses.query();
       console.log($scope.expenses);
+      $scope.findAccounts();
 
     };
 
@@ -99,6 +100,15 @@ angular.module('expenses').controller('ExpensesController', ['$scope', '$statePa
     // Find a list of Accounts
     $scope.findAccounts = function() {
       $scope.accounts = Accounts.query();
+    };
+
+    // Find a account from the list of Accounts
+    $scope.findAccountById = function(accountId) {
+      console.log('called filter' + JSON.stringify($scope.accounts));
+      console.log('accID:'+ accountId);
+      var found = $filter('findBy')($scope.accounts, accountId);
+      console.log(found);
+      return (found);
     };
   }
 ]);

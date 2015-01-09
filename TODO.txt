@@ -2,17 +2,29 @@ Create option for managing transfer between own accounts.
 
 
 
+Create link to account that sends/receives.
 
+Break out find by id service.
+
+
+
+
+Make sure sending and receiving account cannot be the same.
+
+Prevent editing of transfers in the income / expense listings.
+
+
+Skip:
 Add stock to any account (number of, purchase price, dividends)? fetch value-> profit/loss?
-
-
-Tie resources to user
-
-
 
 
 
 Done:
+
+On incomes.query, get expense account if isTransfer. Or in the listing view add a link to the account/expense,
+
+
+Tie resources to user
 
 Add radiobutton/option for not recurring transfers.
 

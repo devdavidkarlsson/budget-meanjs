@@ -7,9 +7,9 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 /**
- * Expense Schema
+ * Income Schema
  */
-var ExpenseSchema = new Schema({
+var TransactionSchema = new Schema({
   name: {
     type: String,
     default: '',
@@ -40,27 +40,21 @@ var ExpenseSchema = new Schema({
     required: 'Please fill whether income is recurring yearly',
     trim: true
   },
-  account: {
+  toAccount: {
     type: Schema.ObjectId,
-    ref: 'Account',
-    required: 'Please select account'
+    ref: 'Account'
+    //required: 'Please select account'
 
   },
-    isTransfer: {
-      type: Boolean,
-      default: false,
-      trim: true
-  },
-  income:{
+  fromAccount: {
     type: Schema.ObjectId,
-    ref:'Income'
+    ref: 'Account'
+    //required: 'Please select account'
   },
-  transferToAccount:{
+  category: {
     type: Schema.ObjectId,
-    ref:'Account'
-  },
-  transferToAccountName:{
-      type: String
+    ref: 'Category'
+    //required: 'Please select account'
   },
   created: {
     type: Date,
@@ -72,4 +66,4 @@ var ExpenseSchema = new Schema({
   }
 });
 
-mongoose.model('Expense', ExpenseSchema);
+mongoose.model('Transaction', TransactionSchema);

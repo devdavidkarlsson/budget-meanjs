@@ -184,7 +184,7 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
       deferred.notify('About to query ' + accountId + '.');
       Incomes.query().$promise.then(function(allIncomes){
         allIncomes.forEach(function(income){
-          if(income.account===accountId){
+          if(income.toAccount===accountId){
             getAllCashflowInstances(income).forEach(function(incomeInstance){
               cashflows.push(incomeInstance);
             });
@@ -194,7 +194,7 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
 
         Expenses.query().$promise.then(function(allExpenses){
           allExpenses.forEach(function(expense){
-            if(expense.account===accountId){
+            if(expense.fromAccount===accountId){
               expense.amount=-expense.amount;
               getAllCashflowInstances(expense).forEach(function(expenceInstance){
                 cashflows.push(expenceInstance);

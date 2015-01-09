@@ -5,7 +5,7 @@
  */
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
-	Expense = mongoose.model('Expense'),
+	Expense = mongoose.model('Transaction'),
 	_ = require('lodash');
 
 /**
@@ -72,8 +72,8 @@ exports.delete = function(req, res) {
 /**
  * List of Expenses
  */
-exports.list = function(req, res) { 
-	Expense.find({user: req.user}).sort('-created').populate('user', 'displayName').exec(function(err, expenses) {
+exports.list = function(req, res) {
+	Expense.find({user: req.user, fromAccount :{'$ne': null }}).sort('-created').populate('user', 'displayName').exec(function(err, expenses) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)

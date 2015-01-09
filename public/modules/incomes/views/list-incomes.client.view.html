@@ -7,6 +7,8 @@
             <!--span class="badge badge-success" data-ng-bind="income.amount"></span-->
             <span class="label label-info label-as-badge pull-right" data-ng-bind="income.amount"></span>
             <h4 class="list-group-item-heading" data-ng-bind="income.name"></h4>
+
+            <span ng-if="income.isTransfer && income.transferFromAccount" >(Transfer from: {{findAccountById(income.transferFromAccount).name}})</span>
             </br>
             <div class="pull-right date-badge">
                 <b>Date:</b> <span data-ng-bind="income.date| date:'mediumDate'"></span>

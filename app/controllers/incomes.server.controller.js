@@ -5,7 +5,7 @@
  */
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
-	Income = mongoose.model('Income'),
+	Income = mongoose.model('Transaction'),
 	_ = require('lodash');
 
 /**
@@ -73,7 +73,7 @@ exports.delete = function(req, res) {
  * List of Incomes
  */
 exports.list = function(req, res) { 
-	Income.find({user: req.user}).sort('-created').populate('user', 'displayName').exec(function(err, incomes) {
+	Income.find({user: req.user, toAccount :{'$ne': null }}).sort('-created').populate('user', 'displayName').exec(function(err, incomes) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)

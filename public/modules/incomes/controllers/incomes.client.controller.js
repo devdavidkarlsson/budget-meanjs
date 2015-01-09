@@ -1,8 +1,8 @@
 'use strict';
 
 // Incomes controller
-angular.module('incomes').controller('IncomesController', ['$scope', '$stateParams', '$location', 'Authentication', 'Incomes', 'Accounts',
-  function($scope, $stateParams, $location, Authentication, Incomes, Accounts) {
+angular.module('incomes').controller('IncomesController', ['$scope', '$filter', '$stateParams', '$location', 'Authentication', 'Incomes','Expenses', 'Accounts',
+  function($scope, $filter, $stateParams, $location, Authentication, Incomes, Expenses, Accounts) {
     $scope.authentication = Authentication;
 
 
@@ -16,8 +16,9 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$statePara
         date: this.date,
         monthly: this.recurring==='monthly',
         yearly: this.recurring==='yearly',
-        account: this.account._id
+        toAccount: this.account._id
       });
+
 
       // Redirect after save
       income.$save(function(response) {
@@ -58,7 +59,7 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$statePara
         date: income.date,
         monthly: income.recurring==='monthly',
         yearly: income.recurring==='yearly',
-        account: income.account,
+        toAccount: income.account,
         _id: income._id
       });
 
@@ -72,6 +73,7 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$statePara
     // Find a list of Incomes
     $scope.find = function() {
       $scope.incomes = Incomes.query();
+      $scope.findAccounts();
     };
 
     // Find existing Income
@@ -104,6 +106,18 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$statePara
     // Find a list of Accounts
     $scope.findAccounts = function() {
       $scope.accounts = Accounts.query();
+
+    };
+
+
+
+    // Find a account from the list of Accounts
+    $scope.findAccountById = function(accountId) {
+        console.log('called filter' + JSON.stringify($scope.accounts));
+      console.log('accID:'+ accountId);
+        var found = $filter('findBy')($scope.accounts, accountId);
+        console.log(found);
+        return (found);
     };
 
 
