@@ -1,8 +1,8 @@
 'use strict';
 
 // Expenses controller
-angular.module('expenses').controller('ExpensesController', ['$scope','$filter', '$stateParams', '$location', 'Authentication', 'Expenses','Accounts',
-  function($scope,$filter, $stateParams, $location, Authentication, Expenses, Accounts) {
+angular.module('expenses').controller('ExpensesController', ['$scope','$filter', '$stateParams', '$location', 'Authentication', 'Expenses','Accounts','Categories',
+  function($scope,$filter, $stateParams, $location, Authentication, Expenses, Accounts, Categories) {
     $scope.authentication = Authentication;
 
     // Create new Expense
@@ -14,7 +14,8 @@ angular.module('expenses').controller('ExpensesController', ['$scope','$filter',
         date: this.date,
         monthly: this.recurring==='monthly',
         yearly: this.recurring==='yearly',
-        fromAccount: this.account._id
+        fromAccount: this.fromAccount._id,
+        category: this.category._id
       });
 
       // Redirect after save
@@ -55,7 +56,8 @@ angular.module('expenses').controller('ExpensesController', ['$scope','$filter',
         date: expense.date,
         monthly: expense.recurring==='monthly',
         yearly: expense.recurring==='yearly',
-        fromAccount: expense.account,
+        fromAccount: expense.fromAccount,
+        category: expense.category,
         _id: expense._id});
 
       updatedExpense.$update(function() {
@@ -70,36 +72,43 @@ angular.module('expenses').controller('ExpensesController', ['$scope','$filter',
       $scope.expenses = Expenses.query();
       console.log($scope.expenses);
       $scope.findAccounts();
+      $scope.findCategories();
+
 
     };
 
     // Find existing Expense
     $scope.findOne = function() {
+      $scope.findAccounts();
+      $scope.findCategories();
+
       var that = this;
       Expenses.get({
         expenseId: $stateParams.expenseId
       }).$promise.then(function(expense){
-
+            //Customize data to enable toggle recurrence:
             var recurringVar;
             if(expense.monthly===true){
               recurringVar = 'monthly';
             } else if( expense.yearly===true){
               recurringVar = 'yearly';
             }
-
             expense.date = new Date(expense.date);
             expense.recurring = recurringVar;
+
             that.expense=expense;
 
           });
-
-
-      $scope.findAccounts();
     };
 
     // Find a list of Accounts
     $scope.findAccounts = function() {
       $scope.accounts = Accounts.query();
+    };
+
+    // Find a list of Categories
+    $scope.findCategories = function() {
+      $scope.categories = Categories.query();
     };
 
     // Find a account from the list of Accounts

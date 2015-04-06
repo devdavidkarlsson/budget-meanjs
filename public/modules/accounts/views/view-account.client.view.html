@@ -7,11 +7,11 @@
             <li role="presentation" ng-class="{true:'active'}[show === 'graph']"><a ng-click="show='graph'">Graphs</a></li>
         </ul>
         <div ng-show="show=='home'">
-            <a class="list-group-item" ng-class="">
-                <h4>Description<h4/>
-                <h5>{{account.desc}}</h5>
-                <span class="label label-as-badge pull-right" ng-class="sumCashflows > 0 ? 'label-info': 'label-danger'" data-ng-bind="sumCashflows"></span>
-                <h4>Accumulated until today:</h4>
+            <a class="list-group-item" ng-class="" style="min-height: 100px;">
+                <b class="pull-left">Description:</b> <b class="pull-right">Balance:</b></br>
+                </br>
+                <div class="pull-left">{{account.desc}}</div>
+                <div class="label label-as-badge pull-right" ng-class="sumCashflows > 0 ? 'label-info': 'label-danger'" data-ng-bind="sumCashflows" style="margin-top:6px; margin-left:5px;"></div>
             </a>
         </div>
 
@@ -37,15 +37,6 @@
             </a>
         </div>
 
-        <div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == account.user._id))">
-            </br>
-            <a class="btn btn-primary" href="/#!/accounts/{{account._id}}/edit">
-                <i class="glyphicon glyphicon-edit"></i> Edit Account
-            </a>
-            <a class="btn btn-primary" data-ng-click="remove();">
-                <i class="glyphicon glyphicon-trash"></i> Remove Account
-            </a>
-        </div>
         <div ng-show="show=='graph'">
             <h3>Transactions</h3>
             <nvd3-discrete-bar-chart
@@ -73,7 +64,15 @@
     </div>
 
 
-
+        <div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == account.user._id))" style="margin-bottom: 6px;">
+            </br>
+            <a class="btn btn-primary" href="/#!/accounts/{{account._id}}/edit">
+                <i class="glyphicon glyphicon-edit"></i> Edit Account
+            </a>
+            <a class="btn btn-primary" data-ng-click="remove();">
+                <i class="glyphicon glyphicon-trash"></i> Remove Account
+            </a>
+        </div>
 
 
 

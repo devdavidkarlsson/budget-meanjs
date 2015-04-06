@@ -1,8 +1,8 @@
 'use strict';
 
 // Incomes controller
-angular.module('incomes').controller('IncomesController', ['$scope', '$filter', '$stateParams', '$location', 'Authentication', 'Incomes','Expenses', 'Accounts',
-  function($scope, $filter, $stateParams, $location, Authentication, Incomes, Expenses, Accounts) {
+angular.module('incomes').controller('IncomesController', ['$scope', '$filter', '$stateParams', '$location', 'Authentication', 'Incomes','Expenses', 'Accounts', 'Categories',
+  function($scope, $filter, $stateParams, $location, Authentication, Incomes, Expenses, Accounts, Categories) {
     $scope.authentication = Authentication;
 
 
@@ -109,6 +109,10 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$filter', 
 
     };
 
+    // Find a list of Categories
+    $scope.findCategories = function() {
+      $scope.categories = Categories.query();
+    };
 
 
     // Find a account from the list of Accounts

@@ -1,4 +1,4 @@
-<section data-ng-controller="ExpensesController" data-ng-init="findAccounts()">
+<section data-ng-controller="ExpensesController" data-ng-init="findAccounts(); findCategories()">
     <div class="page-header">
         <h1>New Expense</h1>
     </div>
@@ -42,8 +42,13 @@
                     </div>
 
                     <div class="dropdown">
-                        <label class="control-label" for="account">Sending account</label>
-                        <select ng-model="account" id="account" ng-options="acc.name for acc in accounts"></select>
+                        <label class="control-label" for="fromAccount">Sending account</label>
+                        <select ng-model="fromAccount" id="fromAccount" ng-options="acc.name for acc in accounts"></select>
+                    </div>
+
+                    <div class="dropdown">
+                        <label class="control-label" for="categories">Category</label>
+                        <select ng-model="category" id="categories" ng-options="cat.name for cat in categories"></select>
                     </div>
 
 

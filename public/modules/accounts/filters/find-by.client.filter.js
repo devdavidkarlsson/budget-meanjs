@@ -5,11 +5,11 @@ angular.module('accounts').filter('findBy', [
       return function(input, id) {
         var i=0, len=input.length;
         for (; i<len; i++) {
-          if (+input[i]._id == +id) {
+          if (input[i]._id === id) {
             return input[i];
           }
         }
         return null;
-      }
+      };
 	}
 ]);

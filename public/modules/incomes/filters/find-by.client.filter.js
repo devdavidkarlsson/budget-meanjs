@@ -10,6 +10,6 @@ angular.module('incomes').filter('findBy', [
           }
         }
         return null;
-      }
+      };
 	}
 ]);

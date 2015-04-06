@@ -10,6 +10,6 @@ angular.module('expenses').filter('findBy', [
           }
         }
         return null;
-      }
+      };
 	}
 ]);

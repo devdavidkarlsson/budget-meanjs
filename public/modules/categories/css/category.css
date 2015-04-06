@@ -1,0 +1,10 @@
+.progress {
+    height: 3em;
+}
+.progress i {
+    line-height: 3.5em;
+}
+.progress-bar {
+    -webkit-transition: width 1s ease-in-out;
+    transition: width 1s ease-in-out;
+}

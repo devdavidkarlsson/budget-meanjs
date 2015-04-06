@@ -28,9 +28,10 @@ module.exports = {
 				'public/lib/angular-ui-utils/ui-utils.js',
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
                 'public/lib/angular-ui-grid/ui-grid.js',
-                'public/lib/d3/d3.js',
-                'public/lib/nvd3/nv.d3.js',
-                'public/lib/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.min.js'
+                'public/lib/highcharts-ng/src/highcharts-ng.js',
+                'public/lib/jquery/dist/jquery.js',
+              'public/lib/highcharts/highcharts.src.js'
+
 			]
 		},
 		css: [

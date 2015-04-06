@@ -41,8 +41,12 @@
                     </div>
 
                     <div class="dropdown">
-                        <label class="control-label" for="account">Sending account</label>
-                        <select ng-model="expense.account" id="account" ng-options="acc._id as acc.name for acc in accounts" ng-selected="expense.account"></select>
+                        <label class="control-label" for="fromAccount">Sending account</label>
+                        <select ng-model="expense.fromAccount" id="fromAccount" ng-options="acc._id as acc.name for acc in accounts" ng-selected="expense.fromAccount"></select>
+                    </div>
+                    <div class="dropdown">
+                        <label class="control-label" for="categories">Category</label>
+                        <select ng-model="expense.category" id="categories" ng-options="cat._id as cat.name for cat in categories" ng-selected="expense.category"></select>
                     </div>
 
                 </div>
