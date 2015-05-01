@@ -188,7 +188,7 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
 
         var cum = $scope.transactions_graph_values[0].reduce(function(pv, cv) { return pv + cv; }, 0);
         $scope.transactions_cumulative_graph_values[0].push(cum);
-        $scope.labels.push(key.split(' ')[1]+' '+key.split(' ')[3]);
+        $scope.labels.push(key.split(' 00')[0]);
       }
 
 
