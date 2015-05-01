@@ -39,23 +39,20 @@
         </div>
 
         <div ng-show="show=='graph'">
-            {{graphData}}
             <div class="charts" style="text-align: center" >
-                <div class="pie-group list-group-item" data-ng-if="graphData">
+                <div class="pie-group list-group-item" data-ng-if="transactions_graph_values_ && transactions_cumulative_graph_values_">
                 <h3>Transactions</h3>
                     <canvas id="bar" class="chart chart-bar" data="transactions_graph_values_" labels="transactions_graph_labels_" options="transactions_graph_options"
                             legend="true" click="onClick"></canvas>
 
                     <h4>Grand total: {{sumCashflows}}</h4>
             <h3>Cumulative</h3>
-                <canvas id="line" class="chart chart-line" data="transactions_graph_values_" labels="transactions_graph_labels_"
+                <canvas id="line" class="chart chart-line" data="transactions_cumulative_graph_values_" labels="transactions_graph_labels_"
                         legend="true" click="onClick"></canvas>
-
                 </div>
-
-
-
             </div>
+        </div>
+
 
 
         <div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == account.user._id))" style="margin-bottom: 6px;">
@@ -70,7 +67,6 @@
 
 
 
-    </div>
 	<small>
 		<em class="text-muted">
 			Created on

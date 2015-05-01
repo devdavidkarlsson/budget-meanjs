@@ -12,6 +12,8 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
       $scope.show='graph';
       //$scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
       $scope.transactions_graph_values_ = $scope.transactions_graph_values;
+      $scope.transactions_cumulative_graph_values_ = $scope.transactions_cumulative_graph_values;
+
       $scope.transactions_graph_labels_ = $scope.labels;
       $scope.transactions_graph_options = {responsive:true,
                                            scaleBeginAtZero:false,
@@ -149,27 +151,12 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
 
 
       getCashflowsForAccount(accountId).then(function(cashflows){
-        $scope.graphData = [
-          ['Firefox',   45.0],
-          ['IE',       26.8],
-          {
-            name: 'Chrome',
-            y: 12.8,
-            sliced: true,
-            selected: true
-          },
-          ['Safari',    8.5],
-          ['Opera',     6.2],
-          ['Others',   0.7]
-        ];
 
         mergeGraphvalues(getGraphValues(cashflows));
         //Calculate the sum:
         $scope.sumCashflows = getTotalCashflowSum(cashflows);
         $scope.cashflows=cashflows;
       });
-
-
     };
 
     function mergeGraphvalues(graphValues){
@@ -188,12 +175,19 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
 
 
       //reformat array to fit chart.js:
-      $scope.transactions_graph_values=[];
+      $scope.transactions_cumulative_graph_values = [];
+      $scope.transactions_graph_values = [];
       $scope.transactions_graph_values.push([]);
+      $scope.transactions_cumulative_graph_values.push([]);
+
       $scope.labels=[];
+
 
       for(key in sum){
         $scope.transactions_graph_values[0].push(sum[key]);
+
+        var cum = $scope.transactions_graph_values[0].reduce(function(pv, cv) { return pv + cv; }, 0);
+        $scope.transactions_cumulative_graph_values[0].push(cum);
         $scope.labels.push(key.split(' ')[1]+' '+key.split(' ')[3]);
       }
 
