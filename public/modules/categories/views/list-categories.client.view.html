@@ -20,13 +20,13 @@
     <div class="charts" style="text-align: center" >
         <div class="pie-group list-group-item" data-ng-if="categorySummationComplete===true">
             <h3>Actual consumption:</h3>
-            <pie title="sum" obj="sum_chart" ></pie>
+            <chart title="sum" obj="sum_chart" ></chart>
             <h4>Grand total: {{grand_total[1]}}</h4>
         </div>
 
         <div class="pie-group list-group-item" >
             <h3>Budget distribution:</h3>
-            <pie title="amount" obj=amount_chart></pie>
+            <chart title="amount" obj=amount_chart></chart>
             <h4>Grand total: {{grand_total[0]}}</h4>
         </div>
     </div>

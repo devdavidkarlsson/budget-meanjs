@@ -1,10 +1,11 @@
+
 <section data-ng-controller="AccountsController" data-ng-init="calculateOne()">
 	<div class="page-header">
 		<h1 data-ng-bind="account.name"></h1>
         <ul class="nav nav-tabs">
             <li role="presentation" ng-class="{true:'active'}[show === 'home']"><a ng-click="show='home'">Home</a></li>
             <li role="presentation" ng-class="{true:'active'}[show === 'list']"><a ng-click="show='list'">Transactions List</a></li>
-            <li role="presentation" ng-class="{true:'active'}[show === 'graph']"><a ng-click="show='graph'">Graphs</a></li>
+            <li role="presentation" ng-class="{true:'active'}[show === 'graph']"><a ng-click="showGraph()">Graphs</a></li>
         </ul>
         <div ng-show="show=='home'">
             <a class="list-group-item" ng-class="" style="min-height: 100px;">
@@ -38,30 +39,23 @@
         </div>
 
         <div ng-show="show=='graph'">
-            <h3>Transactions</h3>
-            <nvd3-discrete-bar-chart
-                    class="graph"
-                    data="graphData"
-                    width="768"
-                    height="400"
-                    showXAxis="true"
-                    showYAxis="true"
-                    xAxisTickFormat="xAxisTickFormatFunction()"
-                    >
-            </nvd3-discrete-bar-chart>
+            {{graphData}}
+            <div class="charts" style="text-align: center" >
+                <div class="pie-group list-group-item" data-ng-if="graphData">
+                <h3>Transactions</h3>
+                    <canvas id="bar" class="chart chart-bar" data="transactions_graph_values_" labels="transactions_graph_labels_" options="transactions_graph_options"
+                            legend="true" click="onClick"></canvas>
+
+                    <h4>Grand total: {{sumCashflows}}</h4>
             <h3>Cumulative</h3>
+                <canvas id="line" class="chart chart-line" data="transactions_graph_values_" labels="transactions_graph_labels_"
+                        legend="true" click="onClick"></canvas>
 
-            <nvd3-cumulative-line-chart
-                    class="graph"
-                    data=""
-                    width="768"
-                    height="400"
-                    showXAxis="true"
-                    showYAxis="true"
-                    >
-            </nvd3-cumulative-line-chart>
+                </div>
 
-    </div>
+
+
+            </div>
 
 
         <div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == account.user._id))" style="margin-bottom: 6px;">

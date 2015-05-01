@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('categories').directive('pie',
+angular.module('ng').directive('chart',
 	function() {
 		return {
 			templateUrl: '/modules/categories/directives/pie.client.template.html',

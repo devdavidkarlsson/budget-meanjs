@@ -19,15 +19,10 @@ module.exports = {
 				'public/lib/angular-ui-utils/ui-utils.min.js',
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
                 'public/lib/angular-ui-grid/ui-grid.min.js',
-                'public/lib/d3/d3.js',
-                'public/lib/nvd3/nv.d3.js',
-                'public/lib/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.min.js'
-
             ]
 		},
 		css: [
           'public/dist/application.min.css',
-          'public/nvd3/nv.d3.css'
         ],
         js: 'public/dist/application.min.js'
 	},

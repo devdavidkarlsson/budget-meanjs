@@ -28,15 +28,15 @@ module.exports = {
 				'public/lib/angular-ui-utils/ui-utils.js',
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
                 'public/lib/angular-ui-grid/ui-grid.js',
-                'public/lib/highcharts-ng/src/highcharts-ng.js',
-                'public/lib/jquery/dist/jquery.js',
-              'public/lib/highcharts/highcharts.src.js'
+                'public/lib/Chart.js/Chart.js',
+                'public/lib/angular-chart.js/dist/angular-chart.js',
+                'public/lib/jquery/dist/jquery.js'
 
 			]
 		},
 		css: [
 			'public/modules/**/css/*.css',
-            'public/nvd3/nv.d3.css'
+            'public/lib/angular-chart.js/dist/angular-chart.css'
 		],
 		js: [
 			'public/config.js',

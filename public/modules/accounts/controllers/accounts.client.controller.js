@@ -2,15 +2,26 @@
 
 // Accounts controller
 angular.module('accounts').controller('AccountsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Accounts','Expenses','Incomes','$q',
-  function($scope, $stateParams, $location, Authentication, Accounts, Expenses, Incomes, $q) {
+  function($scope, $stateParams, $location, Authentication, Accounts, Expenses, Incomes, $q ) {
     $scope.authentication = Authentication;
     var removeTemplate ='<button id="deleteBtn" type="button" class="btn-small" ng-click="getExternalScopes().removeRow(row)">Delete</button> ';
 
     $scope.show='home';
 
+    $scope.showGraph = function(){
+      $scope.show='graph';
+      //$scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
+      $scope.transactions_graph_values_ = $scope.transactions_graph_values;
+      $scope.transactions_graph_labels_ = $scope.labels;
+      $scope.transactions_graph_options = {responsive:true,
+                                           scaleBeginAtZero:false,
+                                           barBeginAtOrigin:true};
+
+    }
 
 
-    //Grid setup
+
+    /// /Grid setup
     $scope.$scope = $scope;
 
     $scope.addInterestItem = function(){
@@ -138,7 +149,21 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
 
 
       getCashflowsForAccount(accountId).then(function(cashflows){
-        $scope.graphData=mergeGraphvalues(getGraphValues(cashflows));
+        $scope.graphData = [
+          ['Firefox',   45.0],
+          ['IE',       26.8],
+          {
+            name: 'Chrome',
+            y: 12.8,
+            sliced: true,
+            selected: true
+          },
+          ['Safari',    8.5],
+          ['Opera',     6.2],
+          ['Others',   0.7]
+        ];
+
+        mergeGraphvalues(getGraphValues(cashflows));
         //Calculate the sum:
         $scope.sumCashflows = getTotalCashflowSum(cashflows);
         $scope.cashflows=cashflows;
@@ -162,17 +187,16 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
       }
 
 
-      //reformat array to fit d3:
-      var graphSum=[];
+      //reformat array to fit chart.js:
+      $scope.transactions_graph_values=[];
+      $scope.transactions_graph_values.push([]);
+      $scope.labels=[];
 
       for(key in sum){
-        graphSum.push([key, sum[key]]);
+        $scope.transactions_graph_values[0].push(sum[key]);
+        $scope.labels.push(key.split(' ')[1]+' '+key.split(' ')[3]);
       }
 
-
-      //return to scope
-      return [{'key': 'Cashflows',
-        'values':graphSum}];
 
     }
 
@@ -324,6 +348,7 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
         return d3.time.format('%b')(new Date(d));
       };
     };
+
 
   }
 ]);
