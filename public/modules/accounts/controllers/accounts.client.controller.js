@@ -8,12 +8,18 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
 
     $scope.show='home';
 
+
+    $scope.updateGraphGrain = function(grain){
+      $scope.graphGrain = grain;
+      $scope.mergeGraphValues(null);
+      $scope.showGraph();
+    }
+
     $scope.showGraph = function(){
+
       $scope.show='graph';
-      //$scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
       $scope.transactions_graph_values_ = $scope.transactions_graph_values;
       $scope.transactions_cumulative_graph_values_ = $scope.transactions_cumulative_graph_values;
-
       $scope.transactions_graph_labels_ = $scope.labels;
       $scope.transactions_graph_options = {responsive:true,
                                            scaleBeginAtZero:false,
@@ -152,20 +158,33 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
 
       getCashflowsForAccount(accountId).then(function(cashflows){
 
-        mergeGraphvalues(getGraphValues(cashflows));
+        $scope.mergeGraphValues(getGraphValues(cashflows));
         //Calculate the sum:
         $scope.sumCashflows = getTotalCashflowSum(cashflows);
         $scope.cashflows=cashflows;
       });
     };
 
-    function mergeGraphvalues(graphValues){
+    $scope.mergeGraphValues = function (graphValues){
+      if(!graphValues){
+        graphValues = getGraphValues($scope.cashflows);
+      }
       //Merge values at the same day:
+      // Day:  Complete string
+      // Month: is month index: 1 and year index: 3
+      // Year: is year index: 3
       var sum = {};
       var i,key;
       for (i = 0; i < graphValues.length; i++) {
-        key = graphValues[i][0];
-
+        if($scope.graphGrain === 'month'){
+          var tmpDateArr = (graphValues[i][0]+'').split(' ');
+          key = tmpDateArr[1]+' '+tmpDateArr[3];
+        }else if($scope.graphGrain === 'year'){
+          var tmpDateArr = (graphValues[i][0]+'').split(' ');
+          key = tmpDateArr[3];
+        }else{
+          key = graphValues[i][0];
+        }
         var oldSum = sum[key];
         if (typeof oldSum === 'undefined') {
           oldSum = 0;
@@ -274,15 +293,23 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
           //Go to next month's instance
           newMonth=startDate.getMonth()+1;
 
-
           if(addToLastDayOfMonth){
-            //make sure the day exists in all months before procceding:
+            //make sure the example day exists in all months before procceding:
             startDate.setDate(1);
             //Create an instance at the last day of the month
             newDate = getLastDateOfMonth(new Date(new Date(startDate).setMonth(newMonth)));
           }else{
+            //special februari handling for 30,31 monthly:
+            var daysInFeb = new Date(new Date(new Date(startDate).setMonth(newMonth+1)).setDate(0)).getDate();
+            /*if(newMonth===1 && startDate.getDate() > daysInFeb){
+              //Special februari if date is the 30,31th:
+              newDate = new Date(new Date(startDate).setMonth(newMonth)).setDate(daysInFeb);
             //If date is not last of month: Keep the day number set in the cashflow:
-            newDate = new Date(startDate).setMonth(newMonth);
+            }else{ */{
+              //This does not do things correctly, if januari the 30th, 28th of februari should be used, and then in march again the 30th should be used..:
+              newDate = new Date(startDate).setMonth(newMonth);
+
+            }
           }
           startDate = new Date(newDate);
         }
