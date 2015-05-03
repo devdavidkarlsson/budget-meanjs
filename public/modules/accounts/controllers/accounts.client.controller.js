@@ -302,45 +302,32 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
      */
 
     function getAllCashflowInstances(cashflow) {
-      var startDate=new Date(cashflow.date),
-          currentDate= new Date(),
+      var initialDate = new Date(cashflow.date),
+          currentDate = new Date(),
           cashflows = [],
-          newDate,newMonth, newYear, newCashflow, addToLastDayOfMonth;
+          newDate,newMonth, newYear, newCashflow, addToLastDayOfMonth,
+          startDate = initialDate;
 
       if(cashflow.monthly === true){
-        //If it is the last day of month, make sure all the created instances get last day of month:
-        addToLastDayOfMonth=isLastDayOfMonth(startDate);
-
+        var monthDiff = 0;
 
         while (startDate <= currentDate) {
+
           cashflow.date=startDate;
           newCashflow = JSON.parse(JSON.stringify(cashflow));
           cashflows.push(newCashflow);
 
           //Go to next month's instance
-          newMonth=startDate.getMonth()+1;
+          monthDiff++;
+          newDate = moment(initialDate).add(monthDiff, 'months');
 
-          if(addToLastDayOfMonth){
-            //make sure the example day exists in all months before procceding:
-            startDate.setDate(1);
-            //Create an instance at the last day of the month
-            newDate = getLastDateOfMonth(new Date(new Date(startDate).setMonth(newMonth)));
-          }else{
-            //special februari handling for 30,31 monthly:
-            var daysInFeb = new Date(new Date(new Date(startDate).setMonth(newMonth+1)).setDate(0)).getDate();
-            /*if(newMonth===1 && startDate.getDate() > daysInFeb){
-              //Special februari if date is the 30,31th:
-              newDate = new Date(new Date(startDate).setMonth(newMonth)).setDate(daysInFeb);
-            //If date is not last of month: Keep the day number set in the cashflow:
-            }else{ */{
-              //This does not do things correctly, if januari the 30th, 28th of februari should be used, and then in march again the 30th should be used..:
-              newDate = new Date(startDate).setMonth(newMonth);
-
-            }
-          }
           startDate = new Date(newDate);
         }
       }
+
+
+
+
       else if(cashflow.yearly === true){
         addToLastDayOfMonth=isLastDayOfMonth(startDate);
 

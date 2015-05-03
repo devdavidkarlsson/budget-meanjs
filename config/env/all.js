@@ -30,7 +30,8 @@ module.exports = {
                 'public/lib/angular-ui-grid/ui-grid.js',
                 'public/lib/Chart.js/Chart.js',
                 'public/lib/angular-chart.js/dist/angular-chart.js',
-                'public/lib/jquery/dist/jquery.js'
+                'public/lib/jquery/dist/jquery.js',
+                'public/lib/moment/moment.js'
 
 			]
 		},
