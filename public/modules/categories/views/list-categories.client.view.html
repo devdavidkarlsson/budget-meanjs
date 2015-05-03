@@ -19,14 +19,16 @@
 
     <div class="charts" style="text-align: center" >
         <div class="pie-group list-group-item" data-ng-if="categorySummationComplete===true">
-            <h3>Actual consumption:</h3>
-            <chart title="sum" obj="sum_chart" ></chart>
+            <h3>Actual consumption distribution:</h3>
+            <canvas id="pie1" class="chart chart-pie" data="sum_chart_values" labels="categories_chart_labels"
+                    legend="true" click="onClick"></canvas>
             <h4>Grand total: {{grand_total[1]}}</h4>
         </div>
 
         <div class="pie-group list-group-item" >
-            <h3>Budget distribution:</h3>
-            <chart title="amount" obj=amount_chart></chart>
+            <h3>Budgeted distribution:</h3>
+            <canvas id="pie2" class="chart chart-pie" data="amount_chart_values" labels="categories_chart_labels"
+                    legend="true" click="onClick"></canvas>
             <h4>Grand total: {{grand_total[0]}}</h4>
         </div>
     </div>

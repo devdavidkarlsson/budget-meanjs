@@ -6,6 +6,9 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
 		$scope.authentication = Authentication;
         $scope.amount_arr = [];
         $scope.sum_arr = [];
+        $scope.sum_chart_values = [];
+        $scope.amount_chart_values = [];
+        $scope.categories_chart_labels = [];
 
         //Budget, sum
         $scope.grand_total = [0, 0];
@@ -73,13 +76,17 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
                 //Calculate sums for bar-charts
                 category.sum = getTotalCashflowSum(cashflows);
                 category.color = progressColor(category);
-                //Add to pie-chart array:
-                $scope.sum_arr.push([category.name, category.sum]);
-                $scope.amount_arr.push([category.name, category.amount]);
+
+                //$scope.sum_arr.push([category.name, category.sum]);
+                //$scope.amount_arr.push([category.name, category.amount]);
                 //Grand total for display:
                 $scope.grand_total[0] += category.amount;
                 $scope.grand_total[1] += category.sum;
 
+                //Add to pie-chart array:
+                $scope.sum_chart_values.push(category.sum);
+                $scope.amount_chart_values.push(category.amount);
+                $scope.categories_chart_labels.push(category.name);
 
 
               }).then(function(){
@@ -245,7 +252,16 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
         return sumCashflows;
       }
 
-      $scope.amount_chart = {
+
+      $scope.sum_chart_values_ = {
+
+      }
+
+      $scope.amount_chart_values_ ={
+
+      }
+
+      /*$scope.amount_chart = {
         chart: {
           plotBackgroundColor: null,
           plotBorderWidth: null,
@@ -308,7 +324,7 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
           name: 'Amount',
           data: $scope.sum_arr
         }]
-      };
+      }; */
 
 
 
