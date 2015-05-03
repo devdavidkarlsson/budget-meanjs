@@ -148,7 +148,12 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
     };
 
 
-    //Find an existing Account and it's corresponding cashflows
+    /*
+    *  Find an existing Account and it's corresponding cashflows
+    *  on the service.
+    *
+    *  Create graph data, sum and set cashflows to scope.
+     */
     $scope.calculateOne = function(){
       var accountId= $stateParams.accountId;
       $scope.findOne();
@@ -165,6 +170,12 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
       });
     };
 
+
+    /*
+    *  Merging method to build corresponding values for each period/grain
+    *  in the graphs, deppending on selected grain (day/month/year).
+    *
+     */
     $scope.mergeGraphValues = function (graphValues){
       if(!graphValues){
         graphValues = getGraphValues($scope.cashflows);
@@ -213,6 +224,10 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
 
     }
 
+    /*
+    *  Generate cashflow instances for all incomes and expenses found on a specific account
+    *  Returns deferred promise for use in then() method.
+     */
     function getCashflowsForAccount(accountId){
       var deferred = $q.defer();
       var cashflows= [];
@@ -257,6 +272,9 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
       return deferred.promise;
     }
 
+    /*
+    *  Get the total sum of a cashflow array
+     */
     function getTotalCashflowSum(cashflows){
       var sumCashflows = 0;
       cashflows.forEach(function(flow) {
@@ -265,6 +283,10 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
       return sumCashflows;
     }
 
+    /*
+    *  Generate cashflow map from array of cashflows:
+     *  key-value: date, amount.
+     */
     function getGraphValues(cashflows){
       var graphValues = [];
       cashflows.forEach(function(flow) {
@@ -273,6 +295,11 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
       return graphValues;
     }
 
+
+    /*
+    *  Instantiate cash flows from inital cashflow that occurs once, monthly or yearly.
+    *  Returns an array of all cashflows. Add moment.js?
+     */
 
     function getAllCashflowInstances(cashflow) {
       var startDate=new Date(cashflow.date),
