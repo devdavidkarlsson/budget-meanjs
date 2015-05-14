@@ -1,7 +1,29 @@
 <section data-ng-controller="CategoriesController" data-ng-init="findOne()">
 	<div class="page-header">
 		<h1 data-ng-bind="category.name"></h1>
-        <h6>Budgeted amount: {{category.amount}} per month</h6>
+        <h6>Budgeted amount: {{category.amount}}</h6>
+        <div class="list-group">
+            <a data-ng-repeat="expense in expenses" data-ng-href="#!/expenses/{{expense._id}}" class="list-group-item">
+                <span class="label label-warning label-as-badge pull-right" data-ng-bind="expense.amount"></span>
+                <h4 class="list-group-item-heading" data-ng-bind="expense.name"></h4>
+                <span ng-if="expense.isTransfer && expense.transferToAccount" >(Transfer to: {{findAccountById(expense.transferToAccount).name}})</span>
+                </br>
+                <h5>Account: {{expense.fromAccountName}}</h5>
+                <div class="pull-right date-badge">
+                    <b>Date:</b> <span data-ng-bind="expense.date| date:'mediumDate'"></span>
+                    <span ng-if="expense.yearly">(Yearly)</span>
+                    <span ng-if="expense.monthly">(Monthly)</span>
+                </div>
+            </a>
+        </div>
+
+
+        <div class="pie-group list-group-item" data-ng-if="categorySummationComplete===true">
+            <h3>Actual consumption distribution:</h3>
+            <canvas id="pie1" class="chart chart-pie" data="account_category_chart_values" labels="account_category_chart_labels"
+                    legend="true" click="onClick"></canvas>
+            <h4>Grand total: {{grand_total[1]}}</h4>
+        </div>
 
     </div>
 	<div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == category.user._id))">

@@ -5,18 +5,25 @@ angular.module('expenses').controller('ExpensesController', ['$scope','$filter',
   function($scope,$filter, $stateParams, $location, Authentication, Expenses, Accounts, Categories) {
     $scope.authentication = Authentication;
 
+    function stripTimezoneFromDate(date_){
+      var date= new Date(date_);
+      return moment.utc([date.getFullYear(), date.getMonth(), date.getDate()]).format();
+    }
+
     // Create new Expense
     $scope.create = function() {
+
       // Create new Expense object
       var expense = new Expenses ({
         name: this.name,
         amount: this.amount,
-        date: this.date,
+        date: stripTimezoneFromDate(this.date),
         monthly: this.recurring==='monthly',
         yearly: this.recurring==='yearly',
         fromAccount: this.fromAccount._id,
         category: this.category._id
       });
+      debugger;
 
       // Redirect after save
       expense.$save(function(response) {
@@ -50,10 +57,12 @@ angular.module('expenses').controller('ExpensesController', ['$scope','$filter',
     $scope.update = function() {
       var expense = $scope.expense;
 
+
+
       var updatedExpense = new Expenses({
         name: expense.name,
         amount: expense.amount,
-        date: expense.date,
+        date: stripTimezoneFromDate(expense.date),
         monthly: expense.recurring==='monthly',
         yearly: expense.recurring==='yearly',
         fromAccount: expense.fromAccount,
@@ -67,14 +76,14 @@ angular.module('expenses').controller('ExpensesController', ['$scope','$filter',
       });
     };
 
+
+
     // Find a list of Expenses
     $scope.find = function() {
       $scope.expenses = Expenses.query();
       console.log($scope.expenses);
       $scope.findAccounts();
       $scope.findCategories();
-
-
     };
 
     // Find existing Expense

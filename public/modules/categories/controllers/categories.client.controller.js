@@ -1,8 +1,8 @@
 'use strict';
 
 // Categories controller
-angular.module('categories').controller('CategoriesController', ['$scope', '$stateParams', '$location', 'Authentication','$q', 'Categories','Expenses',
-	function($scope, $stateParams, $location, Authentication, $q, Categories,Expenses) {
+angular.module('categories').controller('CategoriesController', ['$scope', '$stateParams', '$location', 'Authentication','$q', 'Categories','Expenses','Accounts',
+	function($scope, $stateParams, $location, Authentication, $q, Categories, Expenses, Accounts) {
 		$scope.authentication = Authentication;
         $scope.amount_arr = [];
         $scope.sum_arr = [];
@@ -10,8 +10,17 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
         $scope.amount_chart_values = [];
         $scope.categories_chart_labels = [];
 
+        $scope.account_category_chart_labels = [];
+        $scope.account_category_chart_values = [];
+
+
         //Budget, sum
         $scope.grand_total = [0, 0];
+
+      function stripTimezoneFromDate(date_){
+        var date= new Date(date_);
+        return new Date(moment.utc([date.getFullYear(), date.getMonth(), date.getDate()]).format());
+      }
 
 
         // Create new Category
@@ -71,11 +80,11 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
             that.categories=categories;
 
             categories.forEach(function(category){
-              getExpensesForCategory(category._id, 8).then(function(cashflows){
-
+              getExpensesForCategory(category._id, -1).then(function(cashflows){
                 //Calculate sums for bar-charts
                 category.sum = getTotalCashflowSum(cashflows);
                 category.color = progressColor(category);
+
 
                 //$scope.sum_arr.push([category.name, category.sum]);
                 //$scope.amount_arr.push([category.name, category.amount]);
@@ -103,13 +112,113 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
 
 		// Find existing Category
 		$scope.findOne = function() {
-			$scope.category = Categories.get({ 
+			Categories.get({
 				categoryId: $stateParams.categoryId
-			});
+			}).$promise.then(function(category){
+                  $scope.category = category;
+            $scope.findExpensesWithCategory($scope.category._id);
+                });
 		};
 
 
+      // Find a list of Categories
+      $scope.findExpensesWithCategory = function(categoryId) {
+        $scope.expenses =  [];
+        Expenses.query().$promise.then(function(allExpenses){
+          allExpenses.forEach(function(expense){
+            if(expense.category === categoryId){
+              $scope.getAccountForExpense(expense).then(function(data){
+                expense.fromAccountName = data;
+                $scope.getAllCashflowInstances(expense).forEach(function(expenseInstance){
+                  $scope.expenses.push(expenseInstance);
+                });
+              });
+            }
+          });
+        });
+      }
 
+
+      $scope.getAccountForExpense = function(expense) {
+        var deferred = $q.defer();
+        var matchingAccount;
+        Accounts.query().$promise.then(function(accounts){
+          accounts.forEach(function(account){
+            if(expense.fromAccount === account._id){
+              matchingAccount = account.name;
+            }
+          });
+          deferred.resolve(matchingAccount);
+        });
+         return deferred.promise;
+      }
+
+
+
+      /*
+       *  Instantiate cash flows from inital cashflow that occurs once, monthly or yearly.
+       *  Returns an array of all cashflows. Add moment.js?
+       */
+
+      $scope.getAllCashflowInstances = function(cashflow) {
+        var initialDate = new Date(cashflow.date),
+            currentDate = new Date(),
+            cashflows = [],
+            newDate,newMonth, newYear, newCashflow, addToLastDayOfMonth,
+            startDate = initialDate;
+
+        if(cashflow.monthly === true){
+          var monthDiff = 0;
+
+          while (startDate <= currentDate) {
+
+            cashflow.date=startDate;
+            newCashflow = JSON.parse(JSON.stringify(cashflow));
+            cashflows.push(newCashflow);
+
+            //Go to next month's instance
+            monthDiff++;
+            newDate = moment(initialDate).add(monthDiff, 'months');
+
+            startDate = new Date(newDate);
+          }
+        }
+
+
+
+
+        else if(cashflow.yearly === true){
+          addToLastDayOfMonth=isLastDayOfMonth(startDate);
+
+
+          while (startDate <= currentDate) {
+            cashflow.date=startDate;
+            newCashflow = JSON.parse(JSON.stringify(cashflow));
+            cashflows.push(newCashflow);
+            console.log('new year:' + startDate.getFullYear());
+
+
+
+            newYear = startDate.getFullYear()+1;
+            newDate = new Date(new Date(startDate).setFullYear(newYear));
+
+
+            if(addToLastDayOfMonth){
+              //Do corrections for last day of month
+              newMonth=startDate.getMonth;
+              //make sure the day exists in all months before procceding:
+              startDate.setDate(1);
+              //Create an instance at the last day of the month
+              newDate = getLastDateOfMonth(new Date(new Date(newDate).setMonth(newMonth)));
+            }
+            startDate = new Date(newDate);
+          }
+        }else{
+          //Not reccuring
+          cashflows.push(cashflow);
+        }
+        return cashflows;
+      }
 
 
       //Helpers for summing categories:
@@ -158,9 +267,17 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
 
       //Return the current month:
       function getAllCashflowInstancesForMonth(cashflow, month){
+        //First handle get all:
+        if(month < 0){
+          return getAllCashflowInstancesBetweenDates(
+              cashflow,
+              stripTimezoneFromDate(new Date(cashflow.date)),
+              new Date()
+          );
+        }
         return getAllCashflowInstancesBetweenDates(
             cashflow,
-            new Date(new Date(new Date().setMonth(month)).setDate(1)),
+            stripTimezoneFromDate(new Date(new Date().setMonth(month)).setDate(1)),
             getLastDateOfMonth(new Date(new Date().setMonth(month)))
 
         );
@@ -223,7 +340,7 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
             }
             startDate = new Date(newDate);
           }
-        }else if(cashflow.date< endDate && cashflow.date>startDate){
+        }else if(stripTimezoneFromDate((cashflow.date)) <= endDate && stripTimezoneFromDate(new Date(cashflow.date)) >= startDate){
           //Not reccuring
           cashflows.push(cashflow);
         }
@@ -251,82 +368,6 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
         });
         return sumCashflows;
       }
-
-
-      $scope.sum_chart_values_ = {
-
-      }
-
-      $scope.amount_chart_values_ ={
-
-      }
-
-      /*$scope.amount_chart = {
-        chart: {
-          plotBackgroundColor: null,
-          plotBorderWidth: null,
-          plotShadow: false
-        },
-        title: {
-          text: 'per Category'
-        },
-        tooltip: {
-          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        plotOptions: {
-          pie: {
-            allowPointSelect: true,
-            cursor: 'pointer',
-            dataLabels: {
-              enabled: true,
-              format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-              style: {
-                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-              }
-            }
-          }
-        },
-        series: [{
-          type: 'pie',
-          name: 'Sum',
-          data: $scope.amount_arr
-        }]
-      };
-
-
-      $scope.sum_chart = {
-        chart: {
-          plotBackgroundColor: null,
-          plotBorderWidth: null,
-          plotShadow: false
-        },
-        title: {
-          text: 'per Category'
-        },
-        tooltip: {
-          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        plotOptions: {
-          pie: {
-            allowPointSelect: true,
-            cursor: 'pointer',
-            dataLabels: {
-              enabled: true,
-              format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-              style: {
-                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-              }
-            }
-          }
-        },
-        series: [{
-          type: 'pie',
-          name: 'Amount',
-          data: $scope.sum_arr
-        }]
-      }; */
-
-
 
 
     }

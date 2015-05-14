@@ -237,7 +237,7 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
       Incomes.query().$promise.then(function(allIncomes){
         allIncomes.forEach(function(income){
           if(income.toAccount===accountId){
-            getAllCashflowInstances(income).forEach(function(incomeInstance){
+            $scope.getAllCashflowInstances(income).forEach(function(incomeInstance){
               cashflows.push(incomeInstance);
             });
           }
@@ -248,7 +248,7 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
           allExpenses.forEach(function(expense){
             if(expense.fromAccount===accountId){
               expense.amount=-expense.amount;
-              getAllCashflowInstances(expense).forEach(function(expenceInstance){
+              $scope.getAllCashflowInstances(expense).forEach(function(expenceInstance){
                 cashflows.push(expenceInstance);
               });
 
@@ -301,7 +301,7 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
     *  Returns an array of all cashflows. Add moment.js?
      */
 
-    function getAllCashflowInstances(cashflow) {
+    $scope.getAllCashflowInstances = function(cashflow) {
       var initialDate = new Date(cashflow.date),
           currentDate = new Date(),
           cashflows = [],

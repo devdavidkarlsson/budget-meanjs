@@ -46,15 +46,15 @@
                         <button type="button" class="btn btn-primary" ng-click="updateGraphGrain('month')">Month</button>
                         <button type="button" class="btn btn-primary" ng-click="updateGraphGrain('year')">Year</button>
                     </div>
-                <h3>Transactions</h3>
+                    <h3>Transactions</h3>
                     <canvas id="bar" class="chart chart-bar" data="transactions_graph_values_" labels="transactions_graph_labels_" options="transactions_graph_options"
-                            legend="true" click="onClick"></canvas>
+                            legend="false" click="onClick"></canvas>
 
-                    <h4>Grand total: {{sumCashflows}}</h4>
-            <h3>Cumulative</h3>
-                <canvas id="line" class="chart chart-line" data="transactions_cumulative_graph_values_" labels="transactions_graph_labels_"
-                        legend="true" click="onClick"></canvas>
+                    <h3>Cumulative</h3>
+                    <canvas id="line" class="chart chart-line" data="transactions_cumulative_graph_values_" labels="transactions_graph_labels_"
+                        legend="false" click="onClick"></canvas>
                 </div>
+                <h4>Grand total: {{sumCashflows}}</h4>
             </div>
         </div>
 

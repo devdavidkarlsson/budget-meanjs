@@ -6,14 +6,19 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$filter', 
     $scope.authentication = Authentication;
 
 
+    function stripTimezoneFromDate(date_){
+      var date= new Date(date_);
+      return moment.utc([date.getFullYear(), date.getMonth(), date.getDate()]).format();
+    }
+
+
     // Create new Income
     $scope.create = function() {
       // Create new Income object
-
       var income = new Incomes ({
         name: this.name,
         amount: this.amount,
-        date: this.date,
+        date: stripTimezoneFromDate(this.date),
         monthly: this.recurring==='monthly',
         yearly: this.recurring==='yearly',
         toAccount: this.account._id
@@ -56,7 +61,7 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$filter', 
       var updatedIncome = new Incomes ({
         name: income.name,
         amount: income.amount,
-        date: income.date,
+        date: stripTimezoneFromDate(income.date),
         monthly: income.recurring==='monthly',
         yearly: income.recurring==='yearly',
         toAccount: income.account,

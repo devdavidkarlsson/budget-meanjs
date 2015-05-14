@@ -11,7 +11,7 @@
 				<span data-ng-bind="category.user.displayName"></span>
 			</small>
 			<h4 class="list-group-item-heading" data-ng-bind="category.name"></h4>
-            <h6 ng-if="category.amount">Budgeted amount: {{category.amount}} per month</h6>
+            <h6 ng-if="category.amount">Budgeted amount: {{category.amount}}</h6>
             <progressbar class="progress-striped" animate="true" max="category.amount" value="category.sum" type={{category.color}}></progressbar>
             <i>{{category.sum}} / {{category.amount}}</i>
         </a>
@@ -24,7 +24,6 @@
                     legend="true" click="onClick"></canvas>
             <h4>Grand total: {{grand_total[1]}}</h4>
         </div>
-
         <div class="pie-group list-group-item" >
             <h3>Budgeted distribution:</h3>
             <canvas id="pie2" class="chart chart-pie" data="amount_chart_values" labels="categories_chart_labels"
