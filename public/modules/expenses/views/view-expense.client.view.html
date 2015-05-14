@@ -16,7 +16,8 @@
         </br>
         </br>
     </div>
-    <div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == expense.user._id))">
+    <!--div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == expense.user._id))"-->
+    <div class="pull-right" data-ng-show="(authentication.user)">
         <a class="btn btn-primary" href="/#!/expenses/{{expense._id}}/edit">
             <i class="glyphicon glyphicon-edit"></i>
         </a>

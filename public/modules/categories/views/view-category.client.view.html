@@ -25,9 +25,11 @@
             <h4>Grand total: {{grand_total[1]}}</h4>
         </div>
 
-    </div>
-	<div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == category.user._id))">
-		<a class="btn btn-primary" href="/#!/categories/{{category._id}}/edit">
+
+	<!--div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == category.user._id))"-->
+     <div class="pull-right" data-ng-show="(authentication.user)">
+
+        <a class="btn btn-primary" href="/#!/categories/{{category._id}}/edit">
 			<i class="glyphicon glyphicon-edit"></i> Edit Category and Budget
 		</a>
 		<a class="btn btn-primary" data-ng-click="remove();">

@@ -60,7 +60,8 @@
 
 
 
-        <div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == account.user._id))" style="margin-bottom: 6px;">
+        <!--div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == account.user._id))" style="margin-bottom: 6px;"-->
+        <div class="pull-right" data-ng-show="(authentication.user)" style="margin-bottom: 6px;">
             </br>
             <a class="btn btn-primary" href="/#!/accounts/{{account._id}}/edit">
                 <i class="glyphicon glyphicon-edit"></i> Edit Account
