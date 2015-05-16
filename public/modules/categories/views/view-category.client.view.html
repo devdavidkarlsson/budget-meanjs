@@ -29,6 +29,9 @@
 	<!--div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == category.user._id))"-->
      <div class="pull-right" data-ng-show="(authentication.user)">
 
+         <a class="btn btn-primary" href="/#!/expenses/create">
+             <i class="glyphicon glyphicon-edit"></i> Add Expense
+         </a>
         <a class="btn btn-primary" href="/#!/categories/{{category._id}}/edit">
 			<i class="glyphicon glyphicon-edit"></i> Edit Category and Budget
 		</a>

@@ -25,6 +25,12 @@ var CategorySchema = new Schema({
 		type: Date,
 		default: Date.now
 	},
+    period: {
+      type: String,
+      default: '',
+      required: 'Please fill whether budget is monthly or yearly',
+      trim: true
+    },
 	user: {
 		type: Schema.ObjectId,
 		ref: 'User'

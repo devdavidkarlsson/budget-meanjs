@@ -7,6 +7,7 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
     var removeTemplate ='<button id="deleteBtn" type="button" class="btn-small" ng-click="getExternalScopes().removeRow(row)">Delete</button> ';
 
     $scope.show='home';
+    $scope.graphGrain = 'day';
 
 
     $scope.updateGraphGrain = function(grain){
@@ -194,7 +195,8 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
           var tmpDateArr = (graphValues[i][0]+'').split(' ');
           key = tmpDateArr[3];
         }else{
-          key = graphValues[i][0];
+          var tmpDateArr = (graphValues[i][0]+'').split(' ');
+          key = tmpDateArr[1] + ' ' + tmpDateArr[2] + ' ' + tmpDateArr[3];
         }
         var oldSum = sum[key];
         if (typeof oldSum === 'undefined') {

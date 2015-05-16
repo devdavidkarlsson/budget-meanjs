@@ -17,9 +17,35 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
         //Budget, sum
         $scope.grand_total = [0, 0];
 
+        $scope.graphGrain = 'month';
+
+      $scope.updateGraphGrain = function(grain){
+        $scope.graphGrain = grain;
+        $scope.setLengthOfGraph(grain);
+      }
+
       function stripTimezoneFromDate(date_){
         var date= new Date(date_);
         return new Date(moment.utc([date.getFullYear(), date.getMonth(), date.getDate()]).format());
+      }
+
+
+      $scope.setLengthOfGraph = function(grain){
+
+        $scope.categories.forEach(function(category){
+          if(category.period === 'yearly'){
+            if(grain === 'month'){
+              category.amount /= 12;
+              category.period = 'monthly';
+            }
+          } else if(category.period === 'monthly'){
+            if(grain === 'year'){
+              category.amount *= 12;
+              category.period = 'yearly';
+            }
+          }
+        });
+
       }
 
 
@@ -28,7 +54,8 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
 			// Create new Category object
 			var category = new Categories ({
 				name: this.name,
-                amount: this.amount
+                amount: this.amount,
+                period: this.period
 			});
 
 			// Redirect after save

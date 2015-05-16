@@ -15,6 +15,7 @@ module.exports = {
 			css: [
 				'public/lib/bootstrap/dist/css/bootstrap.css',
 				'public/lib/bootstrap/dist/css/bootstrap-theme.css',
+                'public/lib/bootswatch/slate/bootstrap.css',
                 'public/lib/angular-ui-grid/ui-grid.css',
 			],
 			js: [

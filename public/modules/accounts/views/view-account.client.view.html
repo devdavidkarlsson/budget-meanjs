@@ -3,7 +3,7 @@
 	<div class="page-header">
 		<h1 data-ng-bind="account.name"></h1>
         <ul class="nav nav-tabs">
-            <li role="presentation" ng-class="{true:'active'}[show === 'home']"><a ng-click="show='home'">Home</a></li>
+            <li role="presentation" ng-class="{true:'active'}[show === 'home']"><a ng-click="show='home'">Info</a></li>
             <li role="presentation" ng-class="{true:'active'}[show === 'list']"><a ng-click="show='list'">Transactions List</a></li>
             <li role="presentation" ng-class="{true:'active'}[show === 'graph']"><a ng-click="showGraph()">Graphs</a></li>
         </ul>
@@ -42,9 +42,9 @@
             <div class="charts" style="text-align: center" >
                 <div class="pie-group list-group-item" data-ng-if="transactions_graph_values_ && transactions_cumulative_graph_values_">
                     <div class="btn-group" role="group" aria-label="...">
-                        <button type="button" class="btn btn-primary" ng-click="updateGraphGrain('day')">Day</button>
-                        <button type="button" class="btn btn-primary" ng-click="updateGraphGrain('month')">Month</button>
-                        <button type="button" class="btn btn-primary" ng-click="updateGraphGrain('year')">Year</button>
+                        <button type="button" class="btn btn-primary" ng-class="graphGrain === 'day' ? 'active':''" ng-click="updateGraphGrain('day')">Day</button>
+                        <button type="button" class="btn btn-primary" ng-class="graphGrain === 'month' ? 'active':''" ng-click="updateGraphGrain('month')">Month</button>
+                        <button type="button" class="btn btn-primary" ng-class="graphGrain === 'year' ? 'active':''" ng-click="updateGraphGrain('year')">Year</button>
                     </div>
                     <h3>Transactions</h3>
                     <canvas id="bar" class="chart chart-bar" data="transactions_graph_values_" labels="transactions_graph_labels_" options="transactions_graph_options"
