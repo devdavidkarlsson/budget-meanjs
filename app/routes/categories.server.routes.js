@@ -6,12 +6,13 @@ module.exports = function(app) {
 
 	// Categories Routes
 	app.route('/categories')
-		.get(categories.list)
+		.get(users.requiresLogin, categories.list)
 		.post(users.requiresLogin, categories.create);
 
 	app.route('/categories/:categoryId')
-		.get(categories.read)
-		.put(users.requiresLogin, categories.hasAuthorization, categories.update)
+		//.get(categories.read)
+        .get(users.requiresLogin, categories.hasAuthorization,categories.read)
+        .put(users.requiresLogin, categories.hasAuthorization, categories.update)
 		.delete(users.requiresLogin, categories.hasAuthorization, categories.delete);
 
 	// Finish by binding the Category middleware

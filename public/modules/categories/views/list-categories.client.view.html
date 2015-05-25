@@ -16,24 +16,24 @@
 				<span data-ng-bind="category.user.displayName"></span>
 			</small>
 			<h4 class="list-group-item-heading" data-ng-bind="category.name"></h4>
-            <h6 ng-if="category.amount">Budgeted amount: {{category.amount}}</h6>
-            <progressbar class="progress-striped" animate="true" max="category.amount" value="category.sum" type={{category.color}}></progressbar>
-            <i>{{category.sum}} / {{category.amount}}</i>
+            <h6 ng-if="category.amount">Budgeted amount: {{category.amount| number : 2}}</h6>
+            <progressbar class="progress-striped" animate="true" max="100" value="(category.sum * 100 / category.amount)" type={{category.color}}></progressbar>
+            <i>{{category.sum | number : 2}} / {{category.amount | number : 2}}</i>
         </a>
 
 
     <div class="charts" style="text-align: center" >
-        <div class="pie-group list-group-item" data-ng-if="categorySummationComplete===true">
+        <div class="pie-group list-group-item" data-ng-if="categorySummationComplete===true && grand_total[1]>0">
             <h3>Actual consumption distribution:</h3>
             <canvas id="pie1" class="chart chart-pie" data="sum_chart_values" labels="categories_chart_labels"
                     legend="true" click="onClick"></canvas>
-            <h4>Grand total: {{grand_total[1]}}</h4>
+            <h4>Grand total: {{grand_total[1] | number : 2}}</h4>
         </div>
-        <div class="pie-group list-group-item" >
+        <div class="pie-group list-group-item" data-ng-if="true">
             <h3>Budgeted distribution:</h3>
             <canvas id="pie2" class="chart chart-pie" data="amount_chart_values" labels="categories_chart_labels"
                     legend="true" click="onClick"></canvas>
-            <h4>Grand total: {{grand_total[0]}}</h4>
+            <h4>Grand total: {{grand_total[0] | number : 2}}</h4>
         </div>
     </div>
     </div>

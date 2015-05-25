@@ -7,6 +7,8 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
         $scope.amount_arr = [];
         $scope.sum_arr = [];
         $scope.sum_chart_values = [];
+
+        //Define values to monthly
         $scope.amount_chart_values = [];
         $scope.categories_chart_labels = [];
 
@@ -29,6 +31,28 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
         return new Date(moment.utc([date.getFullYear(), date.getMonth(), date.getDate()]).format());
       }
 
+      /*$scope.registerChartClickEvents= function(){
+        var canvas = document.getElementById('pie2');
+
+        var ctx = canvas.getContext("2d");
+        var myPieChart = new Chart(ctx).Pie();
+
+        canvas.onclick = function(evt){
+          debugger;
+          var activePoints = myPieChart.getSegmentsAtEvent(evt);
+          debugger;// => activePoints is an array of segments on the canvas that are at the same position as the click event.
+        };
+      }*/
+
+      //Click should redirect to category:
+      $scope.onClick = function(evt){
+        $scope.categories.forEach(function(category){
+          if(category.name === evt[0].label){
+           console.log(category._id);
+            $location.path( 'categories/'+ category._id );
+          }
+        });
+      }
 
       $scope.setLengthOfGraph = function(grain){
 
@@ -37,6 +61,7 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
             if(grain === 'month'){
               category.amount /= 12;
               category.period = 'monthly';
+
             }
           } else if(category.period === 'monthly'){
             if(grain === 'year'){
@@ -44,6 +69,7 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
               category.period = 'yearly';
             }
           }
+          category.color = progressColor(category);
         });
 
       }
@@ -129,12 +155,13 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
                   categories.forEach(function(category){
                     //console.log('sum:'+ category.sum);
                   });
+
               });
 
             });
 
             that.categorySummationComplete = true;
-          })
+          });
 		};
 
 		// Find existing Category
