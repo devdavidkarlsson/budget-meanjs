@@ -1,13 +1,20 @@
 <section data-ng-controller="CategoriesController" data-ng-init="find()">
     <div class="page-header">
         <h1>Categories</h1>
-        <label>Select range: </label>
-        <div class="btn-group" role="group" aria-label="...">
-            <button type="button" class="btn btn-primary btn-sm" ng-class="graphGrain === 'month'? 'active' : '' " ng-click="updateGraphGrain('month')">Month</button>
-            <button type="button" class="btn btn-primary btn-sm" ng-class="graphGrain === 'year'? 'active' : '' " ng-click="updateGraphGrain('year')">Year</button>
+        <div class="grain-selector inline pull-left" style="padding-top: 30px">
+            <label class = "inline">Select range: </label>
+            <div class="btn-group inline" role="group" aria-label="...">
+                <button type="button" class="btn btn-primary btn-sm" ng-class="graphGrain === 'month'? 'active' : '' " ng-click="updateGraphGrain('month')">Month</button>
+                <button type="button" class="btn btn-primary btn-sm" ng-class="graphGrain === 'year'? 'active' : '' " ng-click="updateGraphGrain('year')">Year</button>
+            </div>
+            <label class = "inline" data-ng-hide="graphGrain !== 'month'">Select Month: </label>
+            <span ng-repeat="month in all_months_arr" class="inline btn-group" role="group">
+                <button type="button" class="btn btn-primary btn-sm" ng-class="{active: selectedMonth===month}" ng-disabled="!monthShouldBeSelectable(month)" ng-click="clickedMonthInMonthSelector(month)" ng-style="{'width' : (header_width/12)-100+'px'}">{{month}}</button>
+            </span>
+            <input type="number" class="inline" maxlength="4" size="4" min="0" max="{{maxSelectableYear()}}" data-ng-model="selectedYear" ng-change="selectedYearDidUpdate()">
         </div>
     </div>
-    <div class="list-group">
+    <div class="list-group" style="margin-top: 90px;">
         <a data-ng-repeat="category in categories" data-ng-href="#!/categories/{{category._id}}" class="list-group-item">
 			<small class="list-group-item-text">
 				Posted on

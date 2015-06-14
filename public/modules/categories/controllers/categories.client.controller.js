@@ -15,6 +15,8 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
         $scope.account_category_chart_labels = [];
         $scope.account_category_chart_values = [];
 
+        //dynamic style:
+        $scope.header_width = $(".navbar-collapse").width();
 
         //Budget, sum
         $scope.grand_total = [0, 0];
@@ -24,6 +26,7 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
       $scope.updateGraphGrain = function(grain){
         $scope.graphGrain = grain;
         $scope.setLengthOfGraph(grain);
+        setUpMonthSelector();
       }
 
       function stripTimezoneFromDate(date_){
@@ -423,6 +426,84 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
         return sumCashflows;
       }
 
+
+      //MONTH SELECTION UI:
+
+      /*Setup what months to be selectable for the header, needs to be called on changing grain, and year*/
+      function setUpMonthSelector(){
+
+        //Default setting if no year/month selected:
+        if(!$scope.selectedYear){
+          $scope.selectedYear= getCurrentYear();
+        }
+        if(!$scope.selectedMonth){
+          var monthYear = moment( getCurrentMonth()+1 +" " + $scope.selectedYear, "MM YYYY");
+          $scope.selectedMonth = monthYear.format("MMMM");
+        }
+       //Iterate months and populates array of month names:
+       var selectable_months_arr = [],
+            all_months_arr = [],
+            last_to_show;
+
+
+       if( $scope.graphGrain === 'month'){
+          if($scope.selectedYear < getCurrentYear()){
+            console.log("Show 12 months");
+            last_to_show = 11;
+          }else{
+            console.log("Show months until "+getCurrentMonth());
+            last_to_show = getCurrentMonth();
+          }
+          for(var i = 0; i <= 11; i++){
+            var monthYear = moment( i+1 +" " + $scope.selectedYear, "MM YYYY");
+            //add to active months:
+            if(i<= last_to_show){
+              selectable_months_arr.push(monthYear.format("MMMM"));
+            }
+            //Add to all months array:
+              all_months_arr.push(monthYear.format("MMMM"));
+          }
+       }
+        $scope.all_months_arr = all_months_arr;
+        $scope.selectable_months_arr = selectable_months_arr;
+      }
+
+
+      $scope.clickedMonthInMonthSelector = function(month){
+        $scope.selectedMonth = month;
+        setUpMonthSelector();
+      }
+
+      $scope.selectedYearDidUpdate = function(){
+        setUpMonthSelector();
+      }
+
+
+      function getCurrentMonth(){
+        var now = moment();
+        return now.month();
+      }
+
+      function getCurrentYear(){
+        var now = moment();
+        return now.year();
+      }
+
+      $scope.maxSelectableYear= function(){
+        return getCurrentYear();
+      }
+
+      $scope.monthShouldBeSelectable = function (month){
+          return ($scope.selectable_months_arr.indexOf(month) > -1);
+      }
+
+      function updateHeaderMargin(months){
+        $scope.header_margin = $scope.header_width/months.length();
+      }
+
+
+      //INITS:
+      setUpMonthSelector();
 
     }
 ]);
