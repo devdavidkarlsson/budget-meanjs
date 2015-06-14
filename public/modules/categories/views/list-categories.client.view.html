@@ -1,20 +1,39 @@
 <section data-ng-controller="CategoriesController" data-ng-init="find()">
     <div class="page-header">
         <h1>Categories</h1>
-        <div class="grain-selector inline pull-left" style="padding-top: 30px">
-            <label class = "inline">Select range: </label>
-            <div class="btn-group inline" role="group" aria-label="...">
-                <button type="button" class="btn btn-primary btn-sm" ng-class="graphGrain === 'month'? 'active' : '' " ng-click="updateGraphGrain('month')">Month</button>
-                <button type="button" class="btn btn-primary btn-sm" ng-class="graphGrain === 'year'? 'active' : '' " ng-click="updateGraphGrain('year')">Year</button>
-            </div>
-            <label class = "inline" data-ng-hide="graphGrain !== 'month'">Select Month: </label>
-            <span ng-repeat="month in all_months_arr" class="inline btn-group" role="group">
-                <button type="button" class="btn btn-primary btn-sm" ng-class="{active: selectedMonth===month}" ng-disabled="!monthShouldBeSelectable(month)" ng-click="clickedMonthInMonthSelector(month)" ng-style="{'width' : (header_width/12)-100+'px'}">{{month}}</button>
-            </span>
-            <input type="number" class="inline" maxlength="4" size="4" min="0" max="{{maxSelectableYear()}}" data-ng-model="selectedYear" ng-change="selectedYearDidUpdate()">
-        </div>
     </div>
-    <div class="list-group" style="margin-top: 90px;">
+
+    <div class="list-group">
+        <div class="list-group-item">
+            <label style="margin-top:12px; margin-bottom: 12px;">Budget Range:</label>
+
+            <div class="grain-selector" style="">
+                <span class="btn-group dropdown" style="margin: 2px;">
+                    <button type="button" class="btn btn-default btn-sm ">{{graphGrain | capitalize}}ly</button>
+                    <button type="button" class="btn btn-default dropdown-toggle btn-sm " data-toggle="dropdown" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#" ng-class="graphGrain === 'month'? 'active' : '' " ng-click="updateGraphGrain('month')">Monthly</a></li>
+                        <li><a href="#" ng-class="graphGrain === 'year'? 'active' : '' " ng-click="updateGraphGrain('year')">Yearly</a></li>
+                    </ul>
+                </span>
+            </div>
+            <div class="month-selector">
+                <label style="margin-top:12px; margin-bottom: 12px;">History:</label>
+                <span class="input-group input-group-sm" style="margin: 2px;">
+                    <span class="input-group-addon" id="sizing-addon3">Year:</span>
+                    <input type="number" class="form-control" maxlength="4" size="4" min="0" max="{{maxSelectableYear()}}" data-ng-model="selectedYear" ng-change="selectedYearDidUpdate()" style="width: 70px;">
+                </span>
+                <div class="input-group input-group-sm" style="margin: 2px;" data-ng-hide="graphGrain === 'year'">
+                <span class="input-group-addon" id="sizing-addon4">Month:</span>
+                <!--span ng-repeat="month in all_months_arr" class="inline btn-group input-group-addon" role="group"-->
+                    <button type="button" ng-repeat="month in all_months_arr" class="btn btn-primary input-group-addon" ng-class="{active: selectedMonth===month}" ng-disabled="!monthShouldBeSelectable(month)" ng-click="clickedMonthInMonthSelector(month)" ng-style="{'width' : (header_width/14)+'px'}">{{month}}</button>
+                <!--/span-->
+                </div>
+            </div>
+        </div>
         <a data-ng-repeat="category in categories" data-ng-href="#!/categories/{{category._id}}" class="list-group-item">
 			<small class="list-group-item-text">
 				Posted on
