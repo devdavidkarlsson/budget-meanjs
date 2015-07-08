@@ -15,32 +15,32 @@
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="#" ng-class="graphGrain === 'month'? 'active' : '' " ng-click="updateGraphGrain('month')">Monthly</a></li>
-                        <li><a href="#" ng-class="graphGrain === 'year'? 'active' : '' " ng-click="updateGraphGrain('year')">Yearly</a></li>
+                        <li><a  ng-class="graphGrain === 'month'? 'active' : '' " ng-click="updateGraphGrain('month')">Monthly</a></li>
+                        <li><a  ng-class="graphGrain === 'year'? 'active' : '' " ng-click="updateGraphGrain('year')">Yearly</a></li>
                     </ul>
                 </span>
             </div>
             <div class="month-selector">
                 <label style="margin-top:12px; margin-bottom: 12px;">History:</label>
                 <span class="input-group input-group-sm" style="margin: 2px;">
-                    <span class="input-group-addon" id="sizing-addon3">Year:</span>
-                    <input type="number" class="form-control" maxlength="4" size="4" min="0" max="{{maxSelectableYear()}}" data-ng-model="selectedYear" ng-change="selectedYearDidUpdate()" style="width: 70px;">
+                    <span class="input-group-addon" style="border-color: black;" id="sizing-addon3">Year:</span>
+                    <input type="number" class="form-control" maxlength="4" size="4" min="0" max="{{maxSelectableYear()}}" data-ng-model="selectedYear" ng-change="selectedYearDidUpdate()" style="width: 70px; border-color: black;">
                 </span>
                 <div class="input-group input-group-sm" style="margin: 2px;" data-ng-hide="graphGrain === 'year'">
-                <span class="input-group-addon" id="sizing-addon4">Month:</span>
+                <span class="input-group-addon" style="border-color: black;" id="sizing-addon4">Month:</span>
                 <!--span ng-repeat="month in all_months_arr" class="inline btn-group input-group-addon" role="group"-->
-                    <button type="button" ng-repeat="month in all_months_arr" class="btn btn-primary input-group-addon" ng-class="{active: selectedMonth===month}" ng-disabled="!monthShouldBeSelectable(month)" ng-click="clickedMonthInMonthSelector(month)" ng-style="{'width' : (header_width/14)+'px'}">{{month}}</button>
+                    <button type="button" ng-repeat="month in all_months_arr" class="btn btn-primary input-group-addon" ng-class="{active: selectedMonth===month}" ng-disabled="!monthShouldBeSelectable(month)" ng-click="clickedMonthInMonthSelector(month)" style="width: 76px; border-color: black;">{{month}}</button>
                 <!--/span-->
                 </div>
             </div>
         </div>
         <a data-ng-repeat="category in categories" data-ng-href="#!/categories/{{category._id}}" class="list-group-item">
-			<small class="list-group-item-text">
+			<!--small class="list-group-item-text">
 				Posted on
 				<span data-ng-bind="category.created | date:'medium'"></span>
 				by
 				<span data-ng-bind="category.user.displayName"></span>
-			</small>
+			</small-->
 			<h4 class="list-group-item-heading" data-ng-bind="category.name"></h4>
             <h6 ng-if="category.amount">Budgeted amount: {{category.amount| number : 2}}</h6>
             <progressbar class="progress-striped" animate="true" max="100" value="(category.sum * 100 / category.amount)" type={{category.color}}></progressbar>
@@ -49,7 +49,7 @@
 
 
     <div class="charts" style="text-align: center" >
-        <div class="pie-group list-group-item" data-ng-if="categorySummationComplete===true && grand_total[1]>0">
+        <div class="pie-group list-group-item" data-ng-if="grand_total[1]>0">
             <h3>Actual consumption distribution:</h3>
             <canvas id="pie1" class="chart chart-pie" data="sum_chart_values" labels="categories_chart_labels"
                     legend="true" click="onClick"></canvas>

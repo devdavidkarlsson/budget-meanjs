@@ -18,7 +18,7 @@ var CategorySchema = new Schema({
 	},
     amount:{
       type: Number,
-      required: 'Please provide a maximum budget amount that can be consumed in the category per month.',
+      required: 'Please provide a maximum budget amount that can be consumed in the category per period.',
       trim: true
     },
 	created: {
@@ -29,6 +29,12 @@ var CategorySchema = new Schema({
       type: String,
       default: '',
       required: 'Please fill whether budget is monthly or yearly',
+      trim: true
+    },
+    recalc: {
+      type: Boolean,
+      default: true,
+      required: 'Please specify if the category should recalculate to apply on monthly, repsective yearly basis',
       trim: true
     },
 	user: {
