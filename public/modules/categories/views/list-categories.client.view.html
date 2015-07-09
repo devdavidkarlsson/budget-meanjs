@@ -22,14 +22,9 @@
             </div>
             <div class="month-selector">
                 <label style="margin-top:12px; margin-bottom: 12px;">History:</label>
-                <span class="input-group input-group-sm" style="margin: 2px;">
-                    <span class="input-group-addon" style="border-color: black;" id="sizing-addon3">Year:</span>
-                    <input type="number" class="form-control" maxlength="4" size="4" min="0" max="{{maxSelectableYear()}}" data-ng-model="selectedYear" ng-change="selectedYearDidUpdate()" style="width: 70px; border-color: black;">
-                </span>
-                <div class="input-group input-group-sm" style="margin: 2px;" data-ng-hide="graphGrain === 'year'">
-                <span class="input-group-addon" style="border-color: black;" id="sizing-addon4">Month:</span>
-                <!--span ng-repeat="month in all_months_arr" class="inline btn-group input-group-addon" role="group"-->
-                    <button type="button" ng-repeat="month in all_months_arr" class="btn btn-primary input-group-addon" ng-class="{active: selectedMonth===month}" ng-disabled="!monthShouldBeSelectable(month)" ng-click="clickedMonthInMonthSelector(month)" style="width: 76px; border-color: black;">{{month}}</button>
+                <div class="input-group input-group-sm" style="margin: 2px;">
+                    <input type="number" class="input-group-addon" maxlength="4" size="4" min="0" max="{{maxSelectableYear()}}" data-ng-model="selectedYear" ng-change="selectedYearDidUpdate()" style="width: 76px; border-color: black; background-color: white; background-image: none; color: black;">
+                    <button type="button" data-ng-hide="graphGrain === 'year'"  ng-repeat="month in all_months_arr" class="btn btn-primary input-group-addon" ng-class="{active: selectedMonth===month}" ng-disabled="!monthShouldBeSelectable(month)" ng-click="clickedMonthInMonthSelector(month)" style="width: 76px; border-color: black;">{{month}}</button>
                 <!--/span-->
                 </div>
             </div>
