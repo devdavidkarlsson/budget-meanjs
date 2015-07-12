@@ -1,4 +1,4 @@
-<section data-ng-controller="CategoriesController" data-ng-init="findOne()">
+<section data-ng-controller="CategoriesController" data-ng-init="findCategoryExpenses()">
 	<div class="page-header">
 		<h1 data-ng-bind="category.name"></h1>
         <h6>Budgeted amount: {{category.amount}}</h6>
@@ -32,10 +32,10 @@
          <a class="btn btn-primary" href="/#!/expenses/create">
              <i class="glyphicon glyphicon-edit"></i> Add Expense
          </a>
-        <a class="btn btn-primary" href="/#!/categories/{{category._id}}/edit">
+        <a class="btn btn-primary" data-ng-click="showEditModal(category, $event, false)">
 			<i class="glyphicon glyphicon-edit"></i> Edit Category and Budget
 		</a>
-		<a class="btn btn-primary" data-ng-click="remove();">
+		<a class="btn btn-primary" data-ng-click="removeDialog(category, $event);">
 			<i class="glyphicon glyphicon-trash"></i> Remove Category
 		</a>
 	</div>

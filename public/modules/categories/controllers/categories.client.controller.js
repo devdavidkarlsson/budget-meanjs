@@ -1,9 +1,9 @@
 'use strict';
 
 // Categories controller
-angular.module('categories').controller('CategoriesController', ['$scope', '$stateParams', '$location', 'Authentication','$q', 'Categories','Expenses','Accounts',
-	function($scope, $stateParams, $location, Authentication, $q, Categories, Expenses, Accounts) {
-		$scope.authentication = Authentication;
+angular.module('categories').controller('CategoriesController', ['$scope', '$stateParams', '$location', 'Authentication','$q','$modal','Categories','Expenses','Accounts', '$state',
+      function($scope, $stateParams, $location, Authentication, $q, $modal, Categories, Expenses, Accounts, $state) {
+        $scope.authentication = Authentication;
         $scope.amount_arr = [];
         $scope.sum_arr = [];
         $scope.sum_chart_values = [];
@@ -21,11 +21,13 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
         //Budget, sum
         $scope.grand_total = [0, 0];
 
+        if(!$scope.graphGrain)
         $scope.graphGrain = 'month';
 
+
         $scope.filter = {
-          yearly: function(){return ($scope.graphGrain === 'yearly');},
-          monthly: function(){return ($scope.graphGrain === 'monthly');},
+          yearly: function(){return ($scope.graphGrain === 'year');},
+          monthly: function(){return ($scope.graphGrain === 'month');},
           year: function(){ return $scope.selectedYear;},
           month: function(){ return $scope.selectedMonth;}
         };
@@ -33,102 +35,74 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
 
 
 
-      $scope.updateGraphGrain = function(grain){
-        $scope.graphGrain = grain;
-        $scope.setLengthOfGraph(grain);
-        setUpMonthSelector();
-        applyFilter();
+        $scope.updateGraphGrain = function(grain){
+          $scope.graphGrain = grain;
+          $scope.setLengthOfGraph(grain);
+          setUpMonthSelector();
+          applyFilter();
 
-      }
+        }
 
-      function stripTimezoneFromDate(date_){
-        var date= new Date(date_);
-        return new Date(moment.utc([date.getFullYear(), date.getMonth(), date.getDate()]).format());
-      }
+        function stripTimezoneFromDate(date_){
+          var date= new Date(date_);
+          return new Date(moment.utc([date.getFullYear(), date.getMonth(), date.getDate()]).format());
+        }
 
-      //Click should redirect to category:
-      $scope.onClick = function(evt){
-        $scope.categories.forEach(function(category){
-          if(category.name === evt[0].label){
-           console.log(category._id);
-            $location.path( 'categories/'+ category._id );
-          }
-        });
-      }
-
-      $scope.setLengthOfGraph = function(grain){
-
-        $scope.categories.forEach(function(category){
-          if(category.period === 'yearly' && category.recalc === true){
-            if(grain === 'month'){
-              category.amount /= 12;
-              category.period = 'monthly';
-
+        //Click should redirect to category:
+        $scope.onClick = function(evt){
+          $scope.categories.forEach(function(category){
+            if(category.name === evt[0].label){
+              console.log(category._id);
+              $location.path( 'categories/'+ category._id );
             }
-          } else if(category.period === 'monthly' && category.recalc === true){
-            if(grain === 'year'){
-              category.amount *= 12;
-              category.period = 'yearly';
+          });
+        }
+
+        $scope.setLengthOfGraph = function(grain){
+
+          $scope.categories.forEach(function(category){
+            if(category.period === 'yearly' && category.recalc === true){
+              if(grain === 'month'){
+                category.amount /= 12;
+                category.period = 'monthly';
+
+              }
+            } else if(category.period === 'monthly' && category.recalc === true){
+              if(grain === 'year'){
+                category.amount *= 12;
+                category.period = 'yearly';
+              }
             }
+            category.color = progressColor(category);
+          });
+
+        }
+
+
+         $scope.removeDialog= function(category, $event){
+
+
+          if($event){
+            $event.preventDefault();
           }
-          category.color = progressColor(category);
-        });
 
-      }
-
-
-        // Create new Category
-		$scope.create = function() {
-			// Create new Category object
-			var category = new Categories ({
-				name: this.name,
-                amount: this.amount,
-                period: this.period
-			});
-
-			// Redirect after save
-			category.$save(function(response) {
-				$location.path('categories/' + response._id);
-
-				// Clear form fields
-				$scope.name = '';
-                $scope.amount = '';
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
-
-		// Remove existing Category
-		$scope.remove = function(category) {
-			if ( category ) { 
-				category.$remove();
-
-				for (var i in $scope.categories) {
-					if ($scope.categories [i] === category) {
-						$scope.categories.splice(i, 1);
-					}
-				}
-			} else {
-				$scope.category.$remove(function() {
-					$location.path('categories');
-				});
-			}
-		};
-
-		// Update existing Category
-		$scope.update = function() {
-			var category = $scope.category;
-
-			category.$update(function() {
-				$location.path('categories/' + category._id);
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
+          var modalInstance = $modal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'modules/categories/views/remove-category.client.view.html',
+            controller: 'CategoryRemoveController',
+            size: 'sm',
+            resolve: {
+              items: function () { return {category: category, categories: $scope.categories, heading:'Remove Category'};}
+            }
+          });
+        }
 
 
-		// Find a list of Categories
-		$scope.find = function() {
+
+
+
+        // Find a list of Categories
+        $scope.find = function() {
           Categories.query().$promise.then(function(categories){
 
             $scope.categories = categories;
@@ -137,59 +111,59 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
 
             $scope.categorySummationComplete = true;
           });
-		};
+        };
 
 
-      function getExpencesForCategoryAndYear(category, year){
+        function getExpencesForCategoryAndYear(category, year){
 
-      }
+        }
 
-      //Should be performed on filter change
-      function applyFilter(){
+        //Should be performed on filter change
+        function applyFilter(){
 
-        var categories = $scope.categories;
+          var categories = $scope.categories;
 
-        //Define values to monthly
-        $scope.amount_chart_values = [];
-        $scope.sum_chart_values = [];
-        $scope.categories_chart_labels = [];
-        $scope.grand_total = [0, 0];
-
-
-        categories.forEach(function(category){
-          var categoriesForMonth;
-          if($scope.graphGrain=='month' && $scope.selectedMonth ){
-            categoriesForMonth = Number(moment().month($scope.selectedMonth).format('MM'))-1;
-          }
-          else{
-            categoriesForMonth = -1;
-          }
-
-          getExpensesForCategory(category, categoriesForMonth).then(function(cashflows){
-            //Calculate sums for bar-charts
-            category.sum = getTotalCashflowSum(cashflows);
-            category.color = progressColor(category);
+          //Define values to monthly
+          $scope.amount_chart_values = [];
+          $scope.sum_chart_values = [];
+          $scope.categories_chart_labels = [];
+          $scope.grand_total = [0, 0];
 
 
-            //Grand total for display:
-            $scope.grand_total[0] += category.amount;
-            $scope.grand_total[1] += category.sum;
+          categories.forEach(function(category){
+            var categoriesForMonth;
+            if($scope.graphGrain=='month' && $scope.selectedMonth ){
+              categoriesForMonth = Number(moment().month($scope.selectedMonth).format('MM'))-1;
+            }
+            else{
+              categoriesForMonth = -1;
+            }
 
-            //Add to pie-chart array:
-            $scope.sum_chart_values.push(category.sum);
-            $scope.amount_chart_values.push(category.amount);
-            $scope.categories_chart_labels.push(category.name);
+            getExpensesForCategory(category, categoriesForMonth).then(function(cashflows){
+              //Calculate sums for bar-charts
+              category.sum = getTotalCashflowSum(cashflows);
+              category.color = progressColor(category);
 
+
+              //Grand total for display:
+              $scope.grand_total[0] += category.amount;
+              $scope.grand_total[1] += category.sum;
+
+              //Add to pie-chart array:
+              $scope.sum_chart_values.push(category.sum);
+              $scope.amount_chart_values.push(category.amount);
+              $scope.categories_chart_labels.push(category.name);
+              $scope.setLengthOfGraph($scope.graphGrain);
+
+            });
 
           });
-
-        });
-      }
+        }
 
 
-      function getExpensesForCategory(category, monthOrYear){
-        var deferred = $q.defer();
-        var cashflows= [];
+        function getExpensesForCategory(category, monthOrYear){
+          var deferred = $q.defer();
+          var cashflows= [];
           Expenses.query().$promise.then(function(allExpenses){
             allExpenses.forEach(function(expense){
               if(expense.category===category._id){
@@ -215,274 +189,311 @@ angular.module('categories').controller('CategoriesController', ['$scope', '$sta
             deferred.resolve(cashflows);
           });
 
-        return deferred.promise;
-      }
-
-      /*
-       *  Instantiate cash flows from inital cashflow that occurs once, monthly or yearly.
-       *  Returns an array of all cashflows. Add moment.js?
-       */
-
-      function getAllCashflowInstances(cashflow) {
-        return getAllCashflowInstancesBetweenDates(
-            cashflow,
-            moment(cashflow.date),
-            moment()
-        );
-      }
-
-      //Return the current year:
-      function getAllCashflowInstancesForYear(cashflow, year){
-        var endDate;
-        if(year < moment().year()){
-           endDate = moment().year(year).month(12).date(0).endOf('day');
-        }else{
-          endDate = moment();
+          return deferred.promise;
         }
 
-        return getAllCashflowInstancesBetweenDates(
-            cashflow,
-            //Should have year as well:
-            moment().year(year).month(0).date(1).startOf('day'),
-            endDate
-        );
-      }
+        /*
+         *  Instantiate cash flows from inital cashflow that occurs once, monthly or yearly.
+         *  Returns an array of all cashflows. Add moment.js?
+         */
 
-      //Return the current month:
-      function getAllCashflowInstancesForMonth(cashflow, month){
-        return getAllCashflowInstancesBetweenDates(
-            cashflow,
-            //Should have year as well:
-            moment().year($scope.selectedYear).month(month).date(1).startOf('day'),
-            moment().year($scope.selectedYear).month(month+1).date(0).endOf('day')
-        );
-      }
-
-
-      //Instantiate all cashflows in dateRange: startDate til endDate, returns an array or an empty array if no cashflows in range.
-      function getAllCashflowInstancesBetweenDates(cashflow, startDate, endDate) {
-
-        var
-            cashflows = [],
-            currentInstance,nextInstance, IncreasedInstance, newCashflow, addToLastDayOfMonth, dateStep;
-        //If it is the last day of month, make sure all the created instances get last day of month:
-        addToLastDayOfMonth=isLastDayOfMonth(startDate);
-
-        var firstInstance = moment(cashflow.date);
-
-        if(cashflow.monthly === true){
-          dateStep = 'months';
-          //Make sure date is in range:
-          while(firstInstance < startDate)
-          {
-            firstInstance = moment(firstInstance).add(1, dateStep);
-          }
-        }
-        else if(cashflow.yearly === true)
-        {
-          dateStep = 'years';
-          //Make sure date is in range, with respect to year:
-          while(firstInstance.year() < startDate.year())
-          {
-            firstInstance = moment(firstInstance).add(1, dateStep);
-          }
+        function getAllCashflowInstances(cashflow) {
+          return getAllCashflowInstancesBetweenDates(
+              cashflow,
+              moment(cashflow.date),
+              moment()
+          );
         }
 
-
-        //Iterate all instances until end date is reached:
-        var currentInstance = firstInstance;
-        while (startDate <= currentInstance && currentInstance <= endDate) {
-
-          cashflow.date = currentInstance;
-          newCashflow = JSON.parse(JSON.stringify(cashflow));
-          cashflows.push(newCashflow);
-
-          //If cashflow not recurring:
-          if(dateStep === undefined){
-
-            break;
-          }
-          //Go to next year/month's instance
-          IncreasedInstance = currentInstance.add(1, dateStep);
-
-
-          if(addToLastDayOfMonth){
-            //make sure the day exists in all months before procceding:
-            //Create an instance at the last day of the month
-            nextInstance = getLastDateOfMonth(IncreasedInstance);
+        //Return the current year:
+        function getAllCashflowInstancesForYear(cashflow, year){
+          var endDate;
+          if(year < moment().year()){
+            endDate = moment().year(year).month(12).date(0).endOf('day');
           }else{
-            //If date is not last of month: Keep the day number set in the cashflow:
-            nextInstance = IncreasedInstance;
+            endDate = moment();
           }
-          currentInstance = nextInstance;
+
+          return getAllCashflowInstancesBetweenDates(
+              cashflow,
+              //Should have year as well:
+              moment().year(year).month(0).date(1).startOf('day'),
+              endDate
+          );
+        }
+
+        //Return the current month:
+        function getAllCashflowInstancesForMonth(cashflow, month){
+          return getAllCashflowInstancesBetweenDates(
+              cashflow,
+              //Should have year as well:
+              moment().year($scope.selectedYear).month(month).date(1).startOf('day'),
+              moment().year($scope.selectedYear).month(month+1).date(0).endOf('day')
+          );
         }
 
 
-        return cashflows;
-      }
+        //Instantiate all cashflows in dateRange: startDate til endDate, returns an array or an empty array if no cashflows in range.
+        function getAllCashflowInstancesBetweenDates(cashflow, startDate, endDate) {
 
-      //Check to verify if the selected date is the last day of month:
-      function isLastDayOfMonth(dt) {
+          var
+              cashflows = [],
+              currentInstance,nextInstance, IncreasedInstance, newCashflow, addToLastDayOfMonth, dateStep;
+          //If it is the last day of month, make sure all the created instances get last day of month:
+          addToLastDayOfMonth=isLastDayOfMonth(startDate);
 
-        return moment(dt).add(1, 'days').get('month') !== dt.get('month');
-      }
+          var firstInstance = moment(cashflow.date);
 
-      function getLastDateOfMonth(date){
-        //console.log(date);
-        return date.add(1, 'months').date(0);
-      }
-
-      function getTotalCashflowSum(cashflows){
-        var sumCashflows = 0;
-        cashflows.forEach(function(flow) {
-          sumCashflows += Number(flow.amount);
-        });
-        return sumCashflows;
-      }
-
-      // Find existing Category
-      $scope.findOne = function() {
-        Categories.get({
-          categoryId: $stateParams.categoryId
-        }).$promise.then(function(category){
-              $scope.category = category;
-              $scope.findExpensesWithCategory($scope.category._id);
-            });
-      };
+          if(cashflow.monthly === true){
+            dateStep = 'months';
+            //Make sure date is in range:
+            while(firstInstance < startDate)
+            {
+              firstInstance = moment(firstInstance).add(1, dateStep);
+            }
+          }
+          else if(cashflow.yearly === true)
+          {
+            dateStep = 'years';
+            //Make sure date is in range, with respect to year:
+            while(firstInstance.year() < startDate.year())
+            {
+              firstInstance = moment(firstInstance).add(1, dateStep);
+            }
+          }
 
 
-      // Find a list of Categories
-      $scope.findExpensesWithCategory = function(categoryId) {
-        $scope.expenses =  [];
-        Expenses.query().$promise.then(function(allExpenses){
-          allExpenses.forEach(function(expense){
-            if(expense.category === categoryId){
-              $scope.getAccountForExpense(expense).then(function(data){
-                expense.fromAccountName = data;
-                getAllCashflowInstances(expense).forEach(function(expenseInstance){
-                  $scope.expenses.push(expenseInstance);
-                });
+          //Iterate all instances until end date is reached:
+          var currentInstance = firstInstance;
+          while (startDate <= currentInstance && currentInstance <= endDate) {
+
+            cashflow.date = currentInstance;
+            newCashflow = JSON.parse(JSON.stringify(cashflow));
+            cashflows.push(newCashflow);
+
+            //If cashflow not recurring:
+            if(dateStep === undefined){
+
+              break;
+            }
+            //Go to next year/month's instance
+            IncreasedInstance = currentInstance.add(1, dateStep);
+
+
+            if(addToLastDayOfMonth){
+              //make sure the day exists in all months before procceding:
+              //Create an instance at the last day of the month
+              nextInstance = getLastDateOfMonth(IncreasedInstance);
+            }else{
+              //If date is not last of month: Keep the day number set in the cashflow:
+              nextInstance = IncreasedInstance;
+            }
+            currentInstance = nextInstance;
+          }
+
+
+          return cashflows;
+        }
+
+        //Check to verify if the selected date is the last day of month:
+        function isLastDayOfMonth(dt) {
+
+          return moment(dt).add(1, 'days').get('month') !== dt.get('month');
+        }
+
+        function getLastDateOfMonth(date){
+          //console.log(date);
+          return date.add(1, 'months').date(0);
+        }
+
+        function getTotalCashflowSum(cashflows){
+          var sumCashflows = 0;
+          cashflows.forEach(function(flow) {
+            sumCashflows += Number(flow.amount);
+          });
+          return sumCashflows;
+        }
+
+        // Find existing Category
+        $scope.findCategoryExpenses = function() {
+          Categories.get({
+            categoryId: $stateParams.categoryId
+          }).$promise.then(function(category){
+                $scope.category = category;
+                $scope.findExpensesWithCategory($scope.category._id);
               });
-            }
+        };
+
+        $scope.findOne = function(){
+          $scope.category = Categories.get({categoryId: $stateParams.categoryId});
+        }
+
+
+        // Find a list of Categories
+        $scope.findExpensesWithCategory = function(categoryId) {
+          $scope.expenses =  [];
+          Expenses.query().$promise.then(function(allExpenses){
+            allExpenses.forEach(function(expense){
+              if(expense.category === categoryId){
+                $scope.getAccountForExpense(expense).then(function(data){
+                  expense.fromAccountName = data;
+                  getAllCashflowInstances(expense).forEach(function(expenseInstance){
+                    $scope.expenses.push(expenseInstance);
+                  });
+                });
+              }
+            });
           });
-        });
-      }
+        }
 
 
-      $scope.getAccountForExpense = function(expense) {
-        var deferred = $q.defer();
-        var matchingAccount;
-        Accounts.query().$promise.then(function(accounts){
-          accounts.forEach(function(account){
-            if(expense.fromAccount === account._id){
-              matchingAccount = account.name;
-            }
+        $scope.getAccountForExpense = function(expense) {
+          var deferred = $q.defer();
+          var matchingAccount;
+          Accounts.query().$promise.then(function(accounts){
+            accounts.forEach(function(account){
+              if(expense.fromAccount === account._id){
+                matchingAccount = account.name;
+              }
+            });
+            deferred.resolve(matchingAccount);
           });
-          deferred.resolve(matchingAccount);
-        });
-        return deferred.promise;
-      }
-
-
-      //Helpers for summing categories:
-
-
-      function progressColor(category){
-        if(category.sum > category.amount){
-          return 'danger';
-        }else if( category.sum > category.amount/2){
-          return 'warning';
-        }else{
-          return 'success';
+          return deferred.promise;
         }
-      }
 
 
-      //MONTH SELECTION UI:
-
-      /*Setup what months to be selectable for the header, needs to be called on changing grain, and year*/
-      function setUpMonthSelector(){
-
-        //Default setting if no year/month selected:
-        if(!$scope.selectedYear){
-          $scope.selectedYear= getCurrentYear();
-        }
-        if(!$scope.selectedMonth){
-          var monthYear = moment( getCurrentMonth()+1 +" " + $scope.selectedYear, "MM YYYY");
-          $scope.selectedMonth = monthYear.format("MMMM");
-        }
-       //Iterate months and populates array of month names:
-       var selectable_months_arr = [],
-            all_months_arr = [],
-            last_to_show;
+        //Helpers for summing categories:
 
 
-       if( $scope.graphGrain === 'month'){
-          if($scope.selectedYear < getCurrentYear()){
-            //Show 12 months
-            last_to_show = 11;
+        function progressColor(category){
+          if(category.sum > category.amount){
+            return 'danger';
+          }else if( category.sum > category.amount/2){
+            return 'warning';
           }else{
-            //Show selectable months until getCurrentMonth()
-            last_to_show = getCurrentMonth();
+            return 'success';
           }
-          for(var i = 0; i <= 11; i++){
-            var monthYear = moment( i+1 +" " + $scope.selectedYear, "MM YYYY");
-            //add to active months:
-            if(i<= last_to_show){
-              selectable_months_arr.push(monthYear.format("MMMM"));
+        }
+
+
+        //MONTH SELECTION UI:
+
+        /*Setup what months to be selectable for the header, needs to be called on changing grain, and year*/
+        function setUpMonthSelector(){
+
+          //Default setting if no year/month selected:
+          if(!$scope.selectedYear){
+            $scope.selectedYear= getCurrentYear();
+          }
+          if(!$scope.selectedMonth){
+            var monthYear = moment( getCurrentMonth()+1 +" " + $scope.selectedYear, "MM YYYY");
+            $scope.selectedMonth = monthYear.format("MMMM");
+          }
+          //Iterate months and populates array of month names:
+          var selectable_months_arr = [],
+              all_months_arr = [],
+              last_to_show;
+
+
+          if( $scope.graphGrain === 'month'){
+            if($scope.selectedYear < getCurrentYear()){
+              //Show 12 months
+              last_to_show = 11;
+            }else{
+              //Show selectable months until getCurrentMonth()
+              last_to_show = getCurrentMonth();
             }
-            //Add to all months array:
+            for(var i = 0; i <= 11; i++){
+              var monthYear = moment( i+1 +" " + $scope.selectedYear, "MM YYYY");
+              //add to active months:
+              if(i<= last_to_show){
+                selectable_months_arr.push(monthYear.format("MMMM"));
+              }
+              //Add to all months array:
               all_months_arr.push(monthYear.format("MMMM"));
+            }
           }
-       }
-        $scope.all_months_arr = all_months_arr;
-        $scope.selectable_months_arr = selectable_months_arr;
-      }
+          $scope.all_months_arr = all_months_arr;
+          $scope.selectable_months_arr = selectable_months_arr;
+        }
 
 
-      $scope.clickedMonthInMonthSelector = function(month){
-        $scope.selectedMonth = month;
-        setUpMonthSelector();
-        applyFilter();
-      }
+        $scope.clickedMonthInMonthSelector = function(month){
+          $scope.selectedMonth = month;
+          setUpMonthSelector();
+          applyFilter();
+        }
 
-      $scope.selectedYearDidUpdate = function(){
-        setUpMonthSelector();
-        applyFilter();
-      }
+        $scope.selectedYearDidUpdate = function(){
+          setUpMonthSelector();
+          applyFilter();
+        }
 
 
-      function getCurrentMonth(){
-        var now = moment();
-        return now.month();
-      }
+        function getCurrentMonth(){
+          var now = moment();
+          return now.month();
+        }
 
-      function getCurrentYear(){
-        var now = moment();
-        return now.year();
-      }
+        function getCurrentYear(){
+          var now = moment();
+          return now.year();
+        }
 
-      $scope.maxSelectableYear= function(){
-        return getCurrentYear();
-      }
+        $scope.maxSelectableYear= function(){
+          return getCurrentYear();
+        }
 
-      $scope.monthShouldBeSelectable = function (month){
+        $scope.monthShouldBeSelectable = function (month){
           return ($scope.selectable_months_arr.indexOf(month) > -1);
+        }
+
+        function updateHeaderMargin(months){
+          $scope.header_margin = $scope.header_width/months.length();
+        }
+
+
+        //Modal:
+        function openModal(items){
+          $modal.open({
+            templateUrl: 'modules/categories/views/create-category.client.view.html',
+            controller: 'CategoryCreateController',
+            size:  'md',
+            resolve: {
+              items: items
+            }
+          });
+        }
+
+        $scope.showEditModal= function(category, $event, doApplyFilter){
+          var callback = function(){};
+          if(doApplyFilter===true){
+            callback=applyFilter;
+          }
+
+          openModal(function () { return {category: category, heading:'Edit Category', method: 'update', callback: callback} });
+          $event.preventDefault();
+        }
+
+        function setUpModals(){
+          if($state.current.name=='createCategory'){
+            openModal(function () { return {category: null, heading:'New Category', method: 'new'} });
+          }
+          else if( $state.current.name=='editCategory'){
+            $scope.findOne();
+
+            openModal(function () { return {category: $scope.category, heading:'Edit Category', method: 'update'} });
+          }
+        }
+
+        //INITS:
+        setUpMonthSelector();
+        setUpModals();
       }
-
-      function updateHeaderMargin(months){
-        $scope.header_margin = $scope.header_width/months.length();
+    ]).filter('capitalize', function() {
+      return function(input, scope) {
+        if (input!=null)
+          input = input.toLowerCase();
+        return input.substring(0,1).toUpperCase()+input.substring(1);
       }
-
-
-      //INITS:
-      setUpMonthSelector();
-
-    }
-]).filter('capitalize', function() {
-  return function(input, scope) {
-    if (input!=null)
-      input = input.toLowerCase();
-    return input.substring(0,1).toUpperCase()+input.substring(1);
-  }
-});;
+    });;

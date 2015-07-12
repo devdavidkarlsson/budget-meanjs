@@ -1,18 +1,18 @@
 'use strict';
 
 // Accounts controller
-angular.module('accounts').controller('AccountsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Accounts','Expenses','Incomes','$q',
-  function($scope, $stateParams, $location, Authentication, Accounts, Expenses, Incomes, $q ) {
+angular.module('accounts').controller('AccountsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Accounts','Expenses','Incomes','$q', '$modal','$state',
+  function($scope, $stateParams, $location, Authentication, Accounts, Expenses, Incomes, $q, $modal, $state) {
     $scope.authentication = Authentication;
     var removeTemplate ='<button id="deleteBtn" type="button" class="btn-small" ng-click="getExternalScopes().removeRow(row)">Delete</button> ';
 
     $scope.show='home';
-    $scope.graphGrain = 'day';
+    $scope.graphGrain = 'month';
 
 
     $scope.updateGraphGrain = function(grain){
       $scope.graphGrain = grain;
-      $scope.mergeGraphValues(null);
+      $scope.mergeGraphValues();
       $scope.showGraph();
     }
 
@@ -22,6 +22,8 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
       $scope.transactions_graph_values_ = $scope.transactions_graph_values;
       $scope.transactions_cumulative_graph_values_ = $scope.transactions_cumulative_graph_values;
       $scope.transactions_graph_labels_ = $scope.labels;
+      $scope.transactions_cumulative_graph_labels_ = $scope.cumulative_labels;
+
       $scope.transactions_graph_options = {responsive:true,
                                            scaleBeginAtZero:false,
                                            barBeginAtOrigin:true};
@@ -64,39 +66,6 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
         }]
     };
 
-
-    // Create new Account
-    $scope.create = function() {
-
-      // Create new Account object
-      var account = new Accounts ({
-        name: this.name,
-        desc: this.desc,
-        interests: []
-      });
-
-      //Store interest:
-      var interest = {
-        rate: this.rate,
-        date: this.date
-      };
-
-      account.interests.push(interest);
-
-
-
-
-      // Redirect after save
-      account.$save(function(response) {
-        $location.path('accounts/' + response._id);
-
-        // Clear form fields
-        $scope.name = '';
-      }, function(errorResponse) {
-        $scope.error = errorResponse.data.message;
-      });
-    };
-
     // Remove existing Account
     $scope.remove = function(account) {
       if ( account ) {
@@ -114,16 +83,7 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
       }
     };
 
-    // Update existing Account
-    $scope.update = function() {
-      var account = $scope.account;
 
-      account.$update(function() {
-        $location.path('accounts/' + account._id);
-      }, function(errorResponse) {
-        $scope.error = errorResponse.data.message;
-      });
-    };
 
     // Find a list of Accounts
     $scope.find = function() {
@@ -178,9 +138,17 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
     *
      */
     $scope.mergeGraphValues = function (graphValues){
-      if(!graphValues){
-        graphValues = getGraphValues($scope.cashflows);
+
+
+      var graphValues = graphValues || getGraphValues($scope.cashflows);
+      if(!graphValues || graphValues.length < 1){
+        return;
       }
+
+      //Get interval to show:
+      var firstDate = moment(graphValues[0][0]);
+      var lastDate = moment(graphValues[graphValues.length-1][0]);
+
       //Merge values at the same day:
       // Day:  Complete string
       // Month: is month index: 1 and year index: 3
@@ -194,7 +162,17 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
         }else if($scope.graphGrain === 'year'){
           var tmpDateArr = (graphValues[i][0]+'').split(' ');
           key = tmpDateArr[3];
-        }else{
+        }else if($scope.graphGrain === 'day'){
+
+          //Generate arr with all dates from first:
+          for(var iteratedDate = firstDate; iteratedDate < lastDate; iteratedDate.add(1,'days')){
+            var tmpEmptyDateArr = (iteratedDate._d+'').split(' ');
+            key = tmpEmptyDateArr[1] + ' ' + tmpEmptyDateArr[2] + ' ' + tmpEmptyDateArr[3];
+            sum[key] = 0;
+          }
+
+
+
           var tmpDateArr = (graphValues[i][0]+'').split(' ');
           key = tmpDateArr[1] + ' ' + tmpDateArr[2] + ' ' + tmpDateArr[3];
         }
@@ -213,15 +191,25 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
       $scope.transactions_cumulative_graph_values.push([]);
 
       $scope.labels=[];
-
+      $scope.cumulative_labels=[];
 
       for(key in sum){
         $scope.transactions_graph_values[0].push(sum[key]);
 
+        //Only label date with content:
+        var xLabel ='';
+        if(sum[key] !== 0){
+          xLabel = key.split(' 00')[0];
+
+
+        }
+                 //If value change: push cumulative value:
         var cum = $scope.transactions_graph_values[0].reduce(function(pv, cv) { return pv + cv; }, 0);
+        $scope.cumulative_labels.push(xLabel);
         $scope.transactions_cumulative_graph_values[0].push(cum);
-        $scope.labels.push(key.split(' 00')[0]);
+        $scope.labels.push(xLabel);
       }
+
 
 
     }
@@ -260,6 +248,7 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
           cashflows.sort(function(a, b) {
             return new Date(a.date) - new Date(b.date);
           });
+
           if (true) {
             deferred.resolve(cashflows);
           } else {
@@ -267,10 +256,6 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
           }
         });
       });
-
-
-
-
       return deferred.promise;
     }
 
@@ -327,9 +312,6 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
         }
       }
 
-
-
-
       else if(cashflow.yearly === true){
         addToLastDayOfMonth=isLastDayOfMonth(startDate);
 
@@ -385,6 +367,27 @@ angular.module('accounts').controller('AccountsController', ['$scope', '$statePa
         return d3.time.format('%b')(new Date(d));
       };
     };
+
+
+    //Modal:
+    function openModal(items){
+      $modal.open({
+        templateUrl: 'modules/accounts/views/create-update-account.client.view.html',
+        controller: 'AccountCreateController',
+        size:  'sm',
+        resolve: {
+          items: items
+        }
+      });
+    }
+
+    if($state.current.name=='createAccount'){
+      openModal(function () { return {account: null, heading:'New Account', method: 'new'} });
+    }
+    else if( $state.current.name=='editAccount'){
+      $scope.findOne()
+      openModal(function () { return {account: $scope.account, heading:'Edit Account', method: 'update'} });
+    }
 
 
   }

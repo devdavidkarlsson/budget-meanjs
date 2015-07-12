@@ -40,6 +40,14 @@
             <h6 ng-if="category.amount">Budgeted amount: {{category.amount| number : 2}}</h6>
             <progressbar class="progress-striped" animate="true" max="100" value="(category.sum * 100 / category.amount)" type={{category.color}}></progressbar>
             <i>{{category.sum | number : 2}} / {{category.amount | number : 2}}</i>
+            <div class="pull-right" data-ng-show="(authentication.user)">
+                <span class="btn btn-primary progress-button" data-ng-click="showEditModal(category, $event, true)">
+                    <i class="glyphicon glyphicon-edit"></i>
+                </span>
+                <span class="btn btn-primary ng-click-active progress-button" data-ng-click="removeDialog(category,$event);">
+                    <i class="glyphicon glyphicon-trash"></i>
+                </span>
+            </div>
         </a>
 
 

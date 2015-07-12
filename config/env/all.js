@@ -33,6 +33,7 @@ module.exports = {
                 'public/lib/angular-chart.js/dist/angular-chart.js',
                 'public/lib/jquery/dist/jquery.js',
                 'public/lib/moment/moment.js'
+                //'public/lib/angular-modal-service/dst/angular-modal-service.js'
 
 			]
 		},

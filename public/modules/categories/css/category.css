@@ -8,3 +8,7 @@
     -webkit-transition: width 1s ease-in-out;
     transition: width 1s ease-in-out;
 }
+
+.progress-button{
+    margin-top: -18px;
+}

@@ -1,0 +1,12 @@
+    <div class="modal-header">
+        <h3 class="modal-title">{{heading}}</h3>
+    </div>
+    <div class="modal-body">
+        Do you really want to remove:
+        <b>{{ category.name }}</b>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="cancel();">Cancel</button>
+        <button class="btn btn-warning" ng-click="remove(category);">OK</button>
+
+    </div>
