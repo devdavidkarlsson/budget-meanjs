@@ -4,7 +4,7 @@
 
         <div class="col-md-3 pull-left" >
             <b>Name:</b> <span data-ng-bind="income.name"></span></br>
-            <b>To Account:</b><span ng-repeat="account in accounts | filter: {_id: income.account}">
+            <b>Receiveing Account:</b><span ng-repeat="account in accounts | filter: {_id: income.toAccount}">
             <span data-ng-bind="account.name"></span>
             </span>
             </br>

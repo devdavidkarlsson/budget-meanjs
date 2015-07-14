@@ -57,14 +57,14 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$filter', 
     $scope.update = function() {
 
       var income = this.income;
-
+      debugger;
       var updatedIncome = new Incomes ({
         name: income.name,
         amount: income.amount,
         date: stripTimezoneFromDate(income.date),
         monthly: income.recurring==='monthly',
         yearly: income.recurring==='yearly',
-        toAccount: income.account,
+        toAccount: income.toAccount,
         _id: income._id
       });
 
