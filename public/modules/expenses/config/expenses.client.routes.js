@@ -11,7 +11,7 @@ angular.module('expenses').config(['$stateProvider',
 		}).
 		state('createExpense', {
 			url: '/expenses/create',
-			templateUrl: 'modules/expenses/views/create-expense.client.view.html'
+			templateUrl: 'modules/expenses/views/list-expenses.client.view.html'
 		}).
 		state('viewExpense', {
 			url: '/expenses/:expenseId',
@@ -19,7 +19,7 @@ angular.module('expenses').config(['$stateProvider',
 		}).
 		state('editExpense', {
 			url: '/expenses/:expenseId/edit',
-			templateUrl: 'modules/expenses/views/edit-expense.client.view.html'
+			templateUrl: 'modules/expenses/views/list-expenses.client.view.html'
 		});
 	}
 ]);

@@ -18,7 +18,7 @@
     </div>
     <!--div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == expense.user._id))"-->
     <div class="pull-right" data-ng-show="(authentication.user)">
-        <a class="btn btn-primary" href="/#!/expenses/{{expense._id}}/edit">
+        <a class="btn btn-primary" data-ng-click="showEditModal(expense, $event, false)">
             <i class="glyphicon glyphicon-edit"></i>
         </a>
         <a class="btn btn-primary" data-ng-click="remove();">

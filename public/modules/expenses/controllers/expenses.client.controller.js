@@ -1,40 +1,11 @@
 'use strict';
 
 // Expenses controller
-angular.module('expenses').controller('ExpensesController', ['$scope','$filter', '$stateParams', '$location', 'Authentication', 'Expenses','Accounts','Categories',
-  function($scope,$filter, $stateParams, $location, Authentication, Expenses, Accounts, Categories) {
+angular.module('expenses').controller('ExpensesController', ['$scope','$filter', '$stateParams', '$location', '$modal', 'Authentication', 'Expenses','Accounts','Categories','$state',
+  function($scope,$filter, $stateParams, $location, $modal, Authentication, Expenses, Accounts, Categories, $state) {
     $scope.authentication = Authentication;
 
-    function stripTimezoneFromDate(date_){
-      var date= new Date(date_);
-      return moment.utc([date.getFullYear(), date.getMonth(), date.getDate()]).format();
-    }
 
-    // Create new Expense
-    $scope.create = function() {
-
-      // Create new Expense object
-      var expense = new Expenses ({
-        name: this.name,
-        amount: this.amount,
-        date: stripTimezoneFromDate(this.date),
-        monthly: this.recurring==='monthly',
-        yearly: this.recurring==='yearly',
-        fromAccount: this.fromAccount._id,
-        category: this.category._id
-      });
-      debugger;
-
-      // Redirect after save
-      expense.$save(function(response) {
-        $location.path('expenses/' + response._id);
-
-        // Clear form fields
-        $scope.name = '';
-      }, function(errorResponse) {
-        $scope.error = errorResponse.data.message;
-      });
-    };
 
     // Remove existing Expense
     $scope.remove = function(expense) {
@@ -53,31 +24,6 @@ angular.module('expenses').controller('ExpensesController', ['$scope','$filter',
       }
     };
 
-    // Update existing Expense
-    $scope.update = function() {
-      var expense = $scope.expense;
-
-
-
-      var updatedExpense = new Expenses({
-        name: expense.name,
-        amount: expense.amount,
-        date: stripTimezoneFromDate(expense.date),
-        monthly: expense.recurring==='monthly',
-        yearly: expense.recurring==='yearly',
-        fromAccount: expense.fromAccount,
-        category: expense.category,
-        _id: expense._id});
-
-      updatedExpense.$update(function() {
-        $location.path('expenses/' + updatedExpense._id);
-      }, function(errorResponse) {
-        $scope.error = errorResponse.data.message;
-      });
-    };
-
-
-
     // Find a list of Expenses
     $scope.find = function() {
       $scope.expenses = Expenses.query();
@@ -90,6 +36,8 @@ angular.module('expenses').controller('ExpensesController', ['$scope','$filter',
     $scope.findOne = function() {
       $scope.findAccounts();
       $scope.findCategories();
+      //$scope.expense = Expenses.get({expenseId: $stateParams.expenseId});
+
 
       var that = this;
       Expenses.get({
@@ -103,6 +51,7 @@ angular.module('expenses').controller('ExpensesController', ['$scope','$filter',
               recurringVar = 'yearly';
             }
             expense.date = new Date(expense.date);
+            expense.amount = Number(expense.amount);
             expense.recurring = recurringVar;
 
             that.expense=expense;
@@ -128,5 +77,55 @@ angular.module('expenses').controller('ExpensesController', ['$scope','$filter',
       console.log(found);
       return (found);
     };
+
+
+    //Modal:
+    function openModal(items){
+      $modal.open({
+        templateUrl: 'modules/expenses/views/create-expense.client.view.html',
+        controller: 'ExpenseCreateController',
+        size:  'md',
+        resolve: {
+          items: items
+        }
+      });
+    }
+
+    $scope.showEditModal= function(expense, $event, doApplyFilter){
+      var callback = function(){};
+      if(doApplyFilter === true){
+        callback = applyFilter;
+      }
+
+      $scope.findAccounts();
+      $scope.findCategories();
+
+      openModal(function () { return {accounts: $scope.accounts ,categories: $scope.categories, expense: expense, heading:'Edit Expense', method: 'update', callback: callback} });
+      $event.preventDefault();
+    }
+
+    function findCategoriesAndAccounts(){
+      if(!$scope.categories)
+        $scope.findCategories();
+      if(!$scope.accounts)
+        $scope.findAccounts();
+    }
+
+      function setUpModals(){
+
+      if($state.current.name=='createExpense'){
+        findCategoriesAndAccounts();
+        openModal(function () { return {accounts: $scope.accounts ,categories: $scope.categories, expense: null, heading:'New Expense', method: 'new'} });
+      }
+      else if( $state.current.name=='editExpense'){
+        findCategoriesAndAccounts();
+        $scope.findOne();
+
+        openModal(function () { return {accounts: $scope.accounts, categories: $scope.categories, expense: $scope.expense, heading:'Edit Expense', method: 'update'} });
+      }
+    }
+
+    setUpModals();
+
   }
 ]);
