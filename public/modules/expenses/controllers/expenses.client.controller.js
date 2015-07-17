@@ -38,7 +38,6 @@ angular.module('expenses').controller('ExpensesController', ['$scope','$filter',
       $scope.findCategories();
       //$scope.expense = Expenses.get({expenseId: $stateParams.expenseId});
 
-
       var that = this;
       Expenses.get({
         expenseId: $stateParams.expenseId

@@ -7,7 +7,7 @@
             <li role="presentation" ng-class="{true:'active'}[show === 'list']"><a ng-click="show='list'">Transactions List</a></li>
             <li role="presentation" ng-class="{true:'active'}[show === 'graph']"><a ng-click="showGraph()">Graphs</a></li>
         </ul>
-        <div ng-show="show=='home'">
+        <div ng-show="show == 'home'">
             <a class="list-group-item" ng-class="" style="min-height: 100px;">
                 <b class="pull-left">Description:</b> <b class="pull-right">Balance:</b></br>
                 </br>
@@ -17,8 +17,9 @@
         </div>
 
 
-        <div ng-show="show=='list'">
-            <a data-ng-repeat="cashflow in cashflows" data-ng-href="" class="list-group-item">
+        <div ng-show="show == 'list'">
+            <a data-ng-repeat="cashflow in cashflows" class="list-group-item"
+               ng-href='{{(cashflow.amount > 0) ? "/#!/incomes/" : "/#!/expenses/"}}{{cashflow._id}}'>
                 <span class="label label-as-badge pull-right" ng-class="cashflow.amount > 0 ? 'label-info': 'label-danger'" data-ng-bind="cashflow.amount"></span>
                 <h5 class="list-group-item-heading" data-ng-bind="cashflow.name"></h5>
                 </br>
@@ -38,7 +39,7 @@
             </a>
         </div>
 
-        <div ng-show="show=='graph'">
+        <div ng-show="show == 'graph'">
             <div class="charts" style="text-align: center" >
                 <div class="pie-group list-group-item" data-ng-if="transactions_graph_values_ && transactions_cumulative_graph_values_">
                     <div class="btn-group" role="group" aria-label="...">
