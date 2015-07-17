@@ -11,7 +11,7 @@ angular.module('incomes').config(['$stateProvider',
 		}).
 		state('createIncome', {
 			url: '/incomes/create',
-			templateUrl: 'modules/incomes/views/create-income.client.view.html'
+			templateUrl: 'modules/incomes/views/list-incomes.client.view.html'
 		}).
 		state('viewIncome', {
 			url: '/incomes/:incomeId',
@@ -19,7 +19,7 @@ angular.module('incomes').config(['$stateProvider',
 		}).
 		state('editIncome', {
 			url: '/incomes/:incomeId/edit',
-			templateUrl: 'modules/incomes/views/edit-income.client.view.html'
+			templateUrl: 'modules/incomes/views/list-incomes.client.view.html'
 		});
 	}
 ]);

@@ -19,7 +19,7 @@
     <!--div class="pull-right" data-ng-show="((authentication.user) && (authentication.user._id == income.user._id))"-->
     <div class="pull-right" data-ng-show="(authentication.user)">
 
-    <a class="btn btn-primary" href="/#!/incomes/{{income._id}}/edit">
+    <a class="btn btn-primary" data-ng-click="showEditModal(income, $event, false)">
 			<i class="glyphicon glyphicon-edit"></i>
 		</a>
 		<a class="btn btn-primary" data-ng-click="remove();">

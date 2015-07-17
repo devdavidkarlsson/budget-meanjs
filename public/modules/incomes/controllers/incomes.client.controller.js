@@ -1,40 +1,11 @@
 'use strict';
 
 // Incomes controller
-angular.module('incomes').controller('IncomesController', ['$scope', '$filter', '$stateParams', '$location', 'Authentication', 'Incomes','Expenses', 'Accounts', 'Categories',
-  function($scope, $filter, $stateParams, $location, Authentication, Incomes, Expenses, Accounts, Categories) {
+angular.module('incomes').controller('IncomesController', ['$scope', '$filter', '$stateParams', '$state',  '$location', '$modal', 'Authentication', 'Incomes','Expenses', 'Accounts', 'Categories',
+  function($scope, $filter, $stateParams, $state, $location, $modal, Authentication, Incomes, Expenses, Accounts, Categories) {
     $scope.authentication = Authentication;
 
 
-    function stripTimezoneFromDate(date_){
-      var date= new Date(date_);
-      return moment.utc([date.getFullYear(), date.getMonth(), date.getDate()]).format();
-    }
-
-
-    // Create new Income
-    $scope.create = function() {
-      // Create new Income object
-      var income = new Incomes ({
-        name: this.name,
-        amount: this.amount,
-        date: stripTimezoneFromDate(this.date),
-        monthly: this.recurring==='monthly',
-        yearly: this.recurring==='yearly',
-        toAccount: this.account._id
-      });
-
-
-      // Redirect after save
-      income.$save(function(response) {
-        $location.path('incomes/' + response._id);
-
-        // Clear form fields
-        $scope.name = '';
-      }, function(errorResponse) {
-        $scope.error = errorResponse.data.message;
-      });
-    };
 
     // Remove existing Income
     $scope.remove = function(income) {
@@ -53,28 +24,6 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$filter', 
       }
     };
 
-    // Update existing Income
-    $scope.update = function() {
-
-      var income = this.income;
-      debugger;
-      var updatedIncome = new Incomes ({
-        name: income.name,
-        amount: income.amount,
-        date: stripTimezoneFromDate(income.date),
-        monthly: income.recurring==='monthly',
-        yearly: income.recurring==='yearly',
-        toAccount: income.toAccount,
-        _id: income._id
-      });
-
-      updatedIncome.$update(function() {
-        $location.path('incomes/' + updatedIncome._id);
-      }, function(errorResponse) {
-        $scope.error = errorResponse.data.message;
-      });
-    };
-
     // Find a list of Incomes
     $scope.find = function() {
       $scope.incomes = Incomes.query();
@@ -90,23 +39,23 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$filter', 
 
 
 
+            //Customize data to enable toggle recurrence:
             var recurringVar;
-            if(income.monthly===true){
+            if(income.monthly === true){
               recurringVar = 'monthly';
-            } else if( income.yearly===true){
+            } else if( income.yearly === true){
               recurringVar = 'yearly';
+            }else{
+              recurringVar = 'not recurring';
             }
-            income.date= new Date(income.date);
-            income.recurring=recurringVar;
-            that.income=income;
+            income.date = new Date(income.date);
+            income.recurring = recurringVar;
+            income.amount = Number(income.amount);
+            that.income = income;
           });
-
 
       $scope.findAccounts();
     };
-
-
-
 
     // Find a list of Accounts
     $scope.findAccounts = function() {
@@ -128,6 +77,54 @@ angular.module('incomes').controller('IncomesController', ['$scope', '$filter', 
         console.log(found);
         return (found);
     };
+
+    //Modal:
+    function openModal(items){
+      $modal.open({
+        templateUrl: 'modules/incomes/views/create-income.client.view.html',
+        controller: 'IncomeCreateController',
+        size:  'md',
+        resolve: {
+          items: items
+        }
+      });
+    }
+
+    $scope.showEditModal= function(income, $event, doApplyFilter){
+      var callback = function(){};
+      if(doApplyFilter === true){
+        callback = applyFilter;
+      }
+
+      $scope.findAccounts();
+      $scope.findCategories();
+
+      openModal(function () { return {accounts: $scope.accounts ,categories: $scope.categories, income: income, heading:'Edit Income', method: 'update', callback: callback} });
+      $event.preventDefault();
+    }
+
+    function findCategoriesAndAccounts(){
+      if(!$scope.categories)
+        $scope.findCategories();
+      if(!$scope.accounts)
+        $scope.findAccounts();
+    }
+
+    function setUpModals(){
+
+      if($state.current.name=='createIncome'){
+        findCategoriesAndAccounts();
+        openModal(function () { return {accounts: $scope.accounts ,categories: $scope.categories, income: null, heading:'New Income', method: 'new'} });
+      }
+      else if( $state.current.name=='editIncome'){
+        findCategoriesAndAccounts();
+        $scope.findOne();
+
+        openModal(function () { return {accounts: $scope.accounts, categories: $scope.categories, income: $scope.income, heading:'Edit Income', method: 'update'} });
+      }
+    }
+
+    setUpModals();
 
 
 

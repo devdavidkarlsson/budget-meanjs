@@ -45,10 +45,12 @@ angular.module('expenses').controller('ExpensesController', ['$scope','$filter',
       }).$promise.then(function(expense){
             //Customize data to enable toggle recurrence:
             var recurringVar;
-            if(expense.monthly===true){
+            if(expense.monthly === true){
               recurringVar = 'monthly';
-            } else if( expense.yearly===true){
+            } else if( expense.yearly === true){
               recurringVar = 'yearly';
+            }else{
+              recurringVar = 'not recurring';
             }
             expense.date = new Date(expense.date);
             expense.amount = Number(expense.amount);

@@ -1,4 +1,65 @@
-<section data-ng-controller="IncomesController" data-ng-init="findAccounts()">
+<!--section data-ng-controller="ExpensesController" data-ng-init="findAccounts(); findCategories()"-->
+<div class="modal-header">
+    <h3 class="modal-title">{{heading}}</h3>
+</div>
+<form class="form-horizontal" data-ng-submit="submit()" novalidate>
+    <div class="form-group modal-body">
+        <label class="control-label" for="name">Name</label>
+        <div class="controls">
+            <input type="text" data-ng-model="income.name" id="name" class="form-control" placeholder="Name" required>
+        </div>
+        <label class="control-label" for="amount">Income Amount</label>
+        <div class="controls">
+            <input type="number" data-ng-model="income.amount" id="amount" class="form-control" placeholder="Amount" required>
+        </div>
+        <div class="controls">
+            <label class="control-label" for="date">Date of Transaction</label>
+            <div class="list-group-item">
+                <div class="controls">
+                    <input type="date" data-ng-model="income.date" id="date" class="form-control" placeholder="Date" required>
+                </div>
+                <div class="form-inline">
+                    <div class="controls-row">
+                        <label class="control-label">Recurring Transaction</label>
+                        <label class="radio inline">
+                            <input type="radio" data-ng-model="income.recurring" value="not recurring"/>
+                            Not Recurring
+                        </label>
+                        <label class="radio inline">
+                            <input type="radio" data-ng-model="income.recurring" value="monthly"/>
+                            Monthly
+                        </label>
+                        <label class="radio inline">
+                            <input type="radio" data-ng-model="income.recurring" value="yearly"/>
+                            Yearly
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="dropdown">
+                <label class="control-label" for="toAccount">Receiving Account</label>
+                <select ng-model="income.toAccount" id="toAccount" ng-options="acc._id as acc.name for acc in accounts" ng-selected="income.toAccount"></select>
+            </div>
+
+            <!--div class="dropdown">
+                <label class="control-label" for="categories">Category</label>
+                <select ng-model="income.category" id="categories" ng-options="cat._id as cat.name for cat in categories" ng-selected="income.category"></select>
+            </div-->
+
+
+        </div>
+    </div>
+    <div class="form-group modal-footer">
+                    <span data-ng-show="error" class="text-danger">
+                        <strong data-ng-bind="error"></strong>
+                    </span>
+        <button class="btn btn-default" ng-click="cancel()">Cancel</button>
+        <button type="submit" class="btn btn-warning">Submit</button>
+    </div>
+</form>
+
+
+<!--section data-ng-controller="IncomesController" data-ng-init="findAccounts()">
     <div class="page-header">
         <h1>New Income</h1>
     </div>
@@ -57,4 +118,4 @@
             </fieldset>
         </form>
     </div>
-</section>
+</section-->
